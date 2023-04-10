@@ -6,27 +6,27 @@ const authController = {
     register: async (req, res) => {
         try {
             const { username, password, fullname } = req.body
-            const [user, ] = await pool.query("select * from auth where username = ?", [username])
-            if (user[0]) return res.json({ error: "Username already exists!" })
+            // const [user, ] = await pool.query("select * from auth where username = ?", [username])
+            // if (user[0]) return res.json({ error: "Username already exists!" })
             const hash = await bcrypt.hash(password, 10)
 
             const sql = "insert into auth (username, password, fullname) values (?, ?, ?)"
             const [rows, fields] = await pool.query(sql, [username, hash, fullname])
 
             if (rows.affectedRows) {
-                return res.json({ message: "Registered Successfully!" })
+                return res.status(200).json({ message: "Registered Successfully!" })
             } else {
-                return res.json({ error: "Error" })
+                return res.status(401).json({ error: "Error" })
             }
             
         } catch (error) {
-            res.json({ error: error.message })
+            res.status(400).json({ error: error.message })
         }
     },
     login: async (req, res) => {
         try {
             const { username, password } = req.body
-            const [user, ] = await pool.query("select * from auth where username = ?", [username])
+            const [user ] = await pool.query("select * from auth where username = ?", [username])
             if (!user[0]) return res.status(401).json({ error: "Invalid username!" })
             
             const { password: hash, id, fullname } = user[0]

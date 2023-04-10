@@ -24,18 +24,7 @@ export default function Home(){
 
     return (
         <Box>
-            <h1>Home</h1>
-            {accessToken && accessToken !== 'undefined' ?
-            <Box>
-                <p>You are logged in.</p>
-                <button onClick={handleLogout}>Logout</button>
-            </Box>
-            :  
-            <Box>
-                <p>You need to <Link to='/login'>login</Link></p>
-            </Box> 
-             }
-
+            <Navbar />
         </Box>
     );
 }

@@ -7,7 +7,7 @@ const postsController = {
                 data: rows
             })
         } catch (error){
-            res.json({status: "error" })
+            res.status(401).json({status: "error" })
         }
     },
     getById: async (req, res) => {
@@ -18,7 +18,7 @@ const postsController = {
                 data: rows
             })
         } catch (error) {
-            res.json({status: "error" })
+            res.status(401).json({status: "error" })
         }
     },
     create: async (req, res) => {
@@ -26,12 +26,12 @@ const postsController = {
             const { title, content, attime, userId } = req.body
             const sql = "insert into posts (title, content, attime, userId) values (?, ?, ?, ?)"
             const [rows, fields] = await pool.query(sql, [title, content, attime, userId])
-            res.json({
+            res.status(201).json({
                 data: "Created new post!"
             })
         } catch (error) {
             console.log(error)
-            res.json({ status: "error" })
+            res.status(401).json({ status: "error" })
         }
     },
     update: async (req, res) => {
@@ -40,11 +40,11 @@ const postsController = {
             const {id} = req.params
             const sql = "update posts set title = ?, content = ?, attime = ?, userId = ? where id = ?"
             const [rows, fields] = await pool.query(sql, [title, content, attime, userId, id]) 
-            res.json({
+            res.status(201).json({
                 title: `updated post ${id}!`
             })
         } catch (error) {
-            res.json({ status: "error" })
+            res.status(401).json({ status: "error" })
         }
     },
     delete: async (req, res) => {
@@ -56,7 +56,7 @@ const postsController = {
             })
         } catch (error) {
             console.log(error)
-            res.json({
+            res.status(401).json({
                 status: "error"
             })
         }
