@@ -45,7 +45,7 @@ export default function Home(){
                     <Flex
                         padding={3}
                         alignItems="center"
-                        _hover={{ bgColor: "gray.200" }}
+                        _hover={{ bgColor: "gray.200", borderRadius: '10px' }}
                         cursor="pointer"
                     >
                        <AiFillHome size={18} style={{marginRight: '10px'}}/> Home
@@ -55,7 +55,7 @@ export default function Home(){
                     <Flex
                         padding={3}
                         alignItems="center"
-                        _hover={{ bgColor: "gray.200" }}
+                        _hover={{ bgColor: "gray.200", borderRadius: '10px' }}
                         cursor="pointer"
                     >
                        <BsPeopleFill size={18} style={{marginRight: '10px'}}/> Peoples
@@ -66,7 +66,7 @@ export default function Home(){
                     <Flex
                         padding={3}
                         alignItems="center"
-                        _hover={{ bgColor: "gray.200" }}
+                        _hover={{ bgColor: "gray.200", borderRadius: '10px' }}
                         cursor="pointer"
                     >
                         Projects

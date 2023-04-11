@@ -8,7 +8,8 @@ import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import { FiMoreVertical } from 'react-icons/fi';
 import { TbLogout } from 'react-icons/tb';
-import { IoPersonCircleOutline } from 'react-icons/io5'
+import { IoPersonCircleOutline } from 'react-icons/io5';
+import { BsFillPersonFill } from 'react-icons/bs'
 
 export default function Navbar() {
   const dispatch = useDispatch();
@@ -44,11 +45,11 @@ export default function Navbar() {
               aria-label='Options'
               icon={<FiMoreVertical size={20} />}
             />
-            <MenuList>
-              <MenuItem>
-                <Icon as={IoPersonCircleOutline} fontSize={20} marginRight={2}/>Profile
+            <MenuList style={{padding: '5px'}}>
+              <MenuItem _hover={{ borderRadius: '5px'}}>
+                <Icon as={BsFillPersonFill} fontSize={19} marginRight={2}/>Profile
               </MenuItem>
-              <MenuItem onClick={handleLogout}>
+              <MenuItem onClick={handleLogout} _hover={{ borderRadius: '5px'}}>
                 <Icon as={TbLogout} fontSize={20} marginRight={2}/>Log-out
               </MenuItem>
             </MenuList>
