@@ -38,12 +38,13 @@ export default function Navbar() {
       {accessToken && accessToken !== 'undefined' ?
         
         <Box maxWidth='200px' marginLeft='auto' display='flex' flexDirection='row' alignItems='center'>
-          <Avatar name={user.name} src={user.avatar} marginRight=".5rem" />
           <Menu>
             <MenuButton
               as={IconButton}
               aria-label='Options'
-              icon={<FiMoreVertical size={20} />}
+              icon={<Avatar name={user.name} src={user.avatar} marginRight=".5rem" />}
+              _hover={{bgColor: 'transparent'}}
+              _active={{bgColor: 'transparent'}}
             />
             <MenuList style={{padding: '5px'}}>
               <MenuItem _hover={{ borderRadius: '5px'}}>

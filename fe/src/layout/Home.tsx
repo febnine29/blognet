@@ -2,6 +2,7 @@ import React,{useState} from 'react';
 import { Box, Spinner, Flex, Divider } from '@chakra-ui/react';
 import Navbar from '../component/Navbar';
 import { getAllPostsApi } from '../type/common';
+import {Icon} from '@chakra-ui/icons'
 import { Link } from 'react-router-dom';
 import { AiFillHome } from 'react-icons/ai';
 import { BsPeopleFill } from 'react-icons/bs'
@@ -47,8 +48,9 @@ export default function Home(){
                         alignItems="center"
                         _hover={{ bgColor: "gray.200", borderRadius: '10px' }}
                         cursor="pointer"
+                        style={{fontWeight: 'bold', color: '#878787'}}
                     >
-                       <AiFillHome size={18} style={{marginRight: '10px'}}/> Home
+                       <Icon as={AiFillHome} fontSize={18} mr={2} color='blue.500'/> Home
                     </Flex>
                     </Link>
                     <Link to="/tasks">
@@ -57,8 +59,9 @@ export default function Home(){
                         alignItems="center"
                         _hover={{ bgColor: "gray.200", borderRadius: '10px' }}
                         cursor="pointer"
+                        style={{fontWeight: 'bold', color: '#878787'}}
                     >
-                       <BsPeopleFill size={18} style={{marginRight: '10px'}}/> Peoples
+                       <Icon as={BsPeopleFill} fontSize={18} mr={2} color='blue.500'/> Peoples
                     </Flex>
                     </Link>
 
