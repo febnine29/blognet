@@ -1,7 +1,7 @@
 import React,{useState} from 'react';
 import { Box } from '@chakra-ui/react';
-import Navbar from './Navbar';
-import LoginForm from './LoginForm'; 
+import Navbar from '../component/Navbar';
+import LoginForm from '../component/LoginForm'; 
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../app/store';
 import { storeAccessToken } from '../features/auth/AuthSlice';

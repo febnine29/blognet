@@ -3,7 +3,7 @@ import { Box,
         useToast
     } from '@chakra-ui/react'
 import axios from 'axios';
-import LoginForm from './LoginForm'; 
+import LoginForm from '../component/LoginForm'; 
 import { useDispatch } from 'react-redux';
 import { Navigate, useNavigate } from 'react-router';
 import { storeAccessToken } from '../features/auth/AuthSlice';

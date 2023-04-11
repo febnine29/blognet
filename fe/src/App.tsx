@@ -11,7 +11,8 @@ import {
 import Login from './layout/Login';
 import Register from './layout/Register';
 import Home from './layout/Home';
-import Navbar from './layout/Navbar';
+import Navbar from './component/Navbar';
+import Post from './component/Post';
 import './App.css';
 
 function App() {
@@ -34,6 +35,12 @@ function App() {
             path="/register" 
             element={
               <Register />
+            }
+          />
+          <Route 
+            path="/post" 
+            element={
+              <Post />
             }
           />
         </Routes>
