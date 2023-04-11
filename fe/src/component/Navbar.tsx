@@ -1,11 +1,14 @@
 import React from 'react';
 import { Box, Text, Avatar, Button, Menu,IconButton, MenuGroup, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
-import { ChevronDownIcon, HamburgerIcon } from '@chakra-ui/icons';
+import { Icon } from '@chakra-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../app/store';
 import { storeAccessToken } from '../features/auth/AuthSlice';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
+import { FiMoreVertical } from 'react-icons/fi';
+import { TbLogout } from 'react-icons/tb';
+import { IoPersonCircleOutline } from 'react-icons/io5'
 
 export default function Navbar() {
   const dispatch = useDispatch();
@@ -24,7 +27,7 @@ export default function Navbar() {
     <Box
       display="flex"
       alignItems="center"
-      paddingX="100px"
+      paddingX="30px"
       paddingY="1.5rem"
       backgroundColor="gray.100"
     >
@@ -39,11 +42,14 @@ export default function Navbar() {
             <MenuButton
               as={IconButton}
               aria-label='Options'
-              icon={<HamburgerIcon />}
+              icon={<FiMoreVertical size={20} />}
             />
             <MenuList>
+              <MenuItem>
+                <Icon as={IoPersonCircleOutline} fontSize={20} marginRight={2}/>Profile
+              </MenuItem>
               <MenuItem onClick={handleLogout}>
-                Log Out
+                <Icon as={TbLogout} fontSize={20} marginRight={2}/>Log-out
               </MenuItem>
             </MenuList>
           </Menu>

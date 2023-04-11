@@ -1,30 +1,88 @@
 import React,{useState} from 'react';
-import { Box } from '@chakra-ui/react';
+import { Box, Spinner, Flex, Divider } from '@chakra-ui/react';
 import Navbar from '../component/Navbar';
-import LoginForm from '../component/LoginForm'; 
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../app/store';
-import { storeAccessToken } from '../features/auth/AuthSlice';
-import { useNavigate } from 'react-router';
+import { getAllPostsApi } from '../type/common';
 import { Link } from 'react-router-dom';
+import { AiFillHome } from 'react-icons/ai';
+import { BsPeopleFill } from 'react-icons/bs'
 interface LoginResponse {
     accessToken: string;
 }
+interface IPost{
+    id: number;
+    title: string;
+    content: string;
+    attime: string;
+    userId: number
+}
 export default function Home(){
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
-    const accessToken = localStorage.getItem('accessToken')
-    const user = JSON.parse(localStorage.getItem('userInformation') || '{}');
-    const handleLogout = () => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('userInformation');
-        dispatch(storeAccessToken(''))
-        navigate('/login')
-    };
-
+    const [loading, setLoading] = React.useState(false)
+    const [posts, setPosts] = React.useState<IPost[] | null>(null)
+    React.useEffect(() => {
+        setLoading(true)
+        const fetchData = async () => {
+          try {
+            const response = await fetch(getAllPostsApi);
+            const postsData = await response.json();
+            setPosts(postsData.data);
+          } catch (error) {
+            console.error(error);
+          } finally{
+            setLoading(false)
+          }
+        };
+        fetchData();
+      }, []);
+    console.log('posts: ', posts)
     return (
         <Box>
             <Navbar />
+            {loading && <Spinner />}
+            <Box className='main-body' w='100vw' h='100%' p={4} display='flex' flexDirection='row'>
+                <Box className='nav-side' w='25%' paddingRight={5}>
+                    <Flex flexDirection="column" justifySelf="flex-start">
+                    <Link to="/">
+                    <Flex
+                        padding={3}
+                        alignItems="center"
+                        _hover={{ bgColor: "gray.200" }}
+                        cursor="pointer"
+                    >
+                       <AiFillHome size={18} style={{marginRight: '10px'}}/> Home
+                    </Flex>
+                    </Link>
+                    <Link to="/tasks">
+                    <Flex
+                        padding={3}
+                        alignItems="center"
+                        _hover={{ bgColor: "gray.200" }}
+                        cursor="pointer"
+                    >
+                       <BsPeopleFill size={18} style={{marginRight: '10px'}}/> Peoples
+                    </Flex>
+                    </Link>
+
+                    <Link to="/projects">
+                    <Flex
+                        padding={3}
+                        alignItems="center"
+                        _hover={{ bgColor: "gray.200" }}
+                        cursor="pointer"
+                    >
+                        Projects
+                    </Flex>
+                    </Link>
+                </Flex>
+                </Box>
+                <Box className='blog-side' w='50%' px={2} py={4} borderColor='gray.100' borderWidth='2px' borderRadius='10px'>
+                    {posts?.map((post) => (
+                        <Box key={post.id}>
+                            <Box>{post.title}</Box>
+                        </Box>
+                    ))}
+                </Box>
+                <Box className='recent-side' w='25%'>recent-side</Box>
+            </Box>
         </Box>
     );
 }
