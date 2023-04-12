@@ -3,75 +3,62 @@ const commentsController = {
     getAll: async (req, res) => {
         try{
             const [rows, fields] = await pool.query('select * from comments')
-            res.json({
+            res.status(201).json({
                 data: rows
             })
         } catch (error){
-            res.json({status: "error" })
+            res.status(400).json({ status: "error" })
         }
     },
     getCommentById: async (req, res) => {
         try {
             const { id } = req.params
-            const [rows, fields] = await pool.query("select * from comments where commentPostId = ?", [id])
-            res.json({
+            const [rows, fields] = await pool.query("select * from comments where id = ?", [id])
+            res.status(201).json({
                 data: rows
             })
         } catch (error) {
-            res.json({status: "error" })
-        }
-    },
-    getLikeById: async (req, res) => {
-        try {
-            const { id } = req.params
-            const [rows, fields] = await pool.query("select * from comments where likePostId = ?", [id])
-            res.json({
-                data: rows
-            })
-        } catch (error) {
-            res.json({status: "error" })
+            res.status(400).json({ status: "error" })
         }
     },
     create: async (req, res) => {
         try {
-            const { likePostId, commentPostId, userId, content, attime } = req.body
-            const sql = "insert into comments (likePostId, commentPostId, userId, content, attime) values (?, ?, ?, ?, ?)"
-            const [rows, fields] = await pool.query(sql, [likePostId, commentPostId, userId, content, attime])
-            res.json({
+            const { descrip, createdAt, userId, postId } = req.body
+            const sql = "insert into comments (descrip, createdAt, userId, postId) values (?, ?, ?, ?)"
+            const [rows, fields] = await pool.query(sql, [descrip, createdAt, userId, postId])
+            res.status(201).json({
                 data: {
                     result: "commented!",
                     rows
                 }
             })
         } catch (error) {
-            res.json({ status: "error" })
+            res.status(400).json({ status: "error" })
         }
     },
     update: async (req, res) => {
         try {
-            const { likePostId, commentPostId, userId, content, attime } = req.body
+            const { descrip, createdAt, userId, postId } = req.body
             const {id} = req.params
-            const sql = "update comments set likePostId = ?, commentPostId = ?, userId = ?, content = ?, attime = ? where cmtId = ?"
-            const [rows, fields] = await pool.query(sql, [likePostId, commentPostId, userId, content, attime, id]) 
-            res.json({
+            const sql = "update comments set descrip = ?, createdAt = ?, userId = ?, postId = ? where id = ?"
+            const [rows, fields] = await pool.query(sql, [descrip, createdAt, userId, postId, id]) 
+            res.status(201).json({
                 data: `updated comment ${id}!`
             })
         } catch (error) {
-            res.json({ status: "error" })
+            res.status(400).json({ status: "error" })
         }
     },
     delete: async (req, res) => {
         try {
             const { id } = req.params
-            const [rows, fields] = await pool.query("delete from comments where cmtId = ?", [id])
-            res.json({
+            const [rows, fields] = await pool.query("delete from comments where id = ?", [id])
+            res.status(200).json({
                 data: `deleted comment!`
             })
         } catch (error) {
             console.log(error)
-            res.json({
-                status: "error"
-            })
+            res.status(400).json({ status: "error" })
         }
     }
 }

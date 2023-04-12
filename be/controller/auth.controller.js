@@ -5,13 +5,13 @@ const jwt = require('jsonwebtoken')
 const authController = {
     register: async (req, res) => {
         try {
-            const { username, password, fullname } = req.body
+            const { username, password, name, email } = req.body
             // const [user, ] = await pool.query("select * from auth where username = ?", [username])
             // if (user[0]) return res.json({ error: "Username already exists!" })
             const hash = await bcrypt.hash(password, 10)
 
-            const sql = "insert into auth (username, password, fullname) values (?, ?, ?)"
-            const [rows, fields] = await pool.query(sql, [username, hash, fullname])
+            const sql = "insert into users (username, password, name, email) values (?, ?, ?, ?)"
+            const [rows, fields] = await pool.query(sql, [username, hash, name, email])
 
             if (rows.affectedRows) {
                 return res.status(200).json({ message: "Registered Successfully!" })

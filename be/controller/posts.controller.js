@@ -23,9 +23,9 @@ const postsController = {
     },
     create: async (req, res) => {
         try {
-            const { title, content, attime, userId } = req.body
-            const sql = "insert into posts (title, content, attime, userId) values (?, ?, ?, ?)"
-            const [rows, fields] = await pool.query(sql, [title, content, attime, userId])
+            const { descrip, img, userId, createdAt } = req.body
+            const sql = "insert into posts (descrip, img, userId, createdAt) values (?, ?, ?, ?)"
+            const [rows, fields] = await pool.query(sql, [descrip, img, userId, createdAt])
             res.status(201).json({
                 data: "Created new post!"
             })
@@ -36,10 +36,10 @@ const postsController = {
     },
     update: async (req, res) => {
         try {
-            const { title, content, attime, userId } = req.body
+            const { descrip, img, userId, createdAt } = req.body
             const {id} = req.params
-            const sql = "update posts set title = ?, content = ?, attime = ?, userId = ? where id = ?"
-            const [rows, fields] = await pool.query(sql, [title, content, attime, userId, id]) 
+            const sql = "update posts set descrip = ?, img = ?, userId = ?, createdAt = ? where id = ?"
+            const [rows, fields] = await pool.query(sql, [descrip, img, userId, createdAt, id]) 
             res.status(201).json({
                 title: `updated post ${id}!`
             })

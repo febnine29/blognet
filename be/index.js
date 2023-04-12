@@ -17,5 +17,5 @@ app.use('/api/v1/comments', commentsRouter)
 const PORT = process.env.PORT || 5000
 
 app.listen(PORT, () => {
-    console.log("server running...")
+    console.log("-----SERVER IS RUNNING...")
 })
