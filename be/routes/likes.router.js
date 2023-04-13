@@ -1,11 +1,9 @@
 const express  = require('express');
 const router = express.Router()
 
-const likesController = require('../controller/posts.controller')
+const likesController = require('../controller/likes.controller')
 
-router.get('/getAllLikes', postsController.getAll)
-router.get('/getPostId=:id', postsController.getById)
-router.post('/createPost', postsController.create)
-router.put('/updatePostId=:id', postsController.update)
-router.delete('/deletePostId=:id', postsController.delete)
+router.get('/getAllLikes', likesController.getAll)
+router.post('/like', likesController.create)
+router.delete('/unLikePostId=:id', likesController.delete)
 module.exports = router

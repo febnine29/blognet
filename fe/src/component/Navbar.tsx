@@ -9,7 +9,8 @@ import { Link } from 'react-router-dom';
 import { FiMoreVertical } from 'react-icons/fi';
 import { TbLogout } from 'react-icons/tb';
 import { IoPersonCircleOutline } from 'react-icons/io5';
-import { BsFillPersonFill } from 'react-icons/bs'
+import { BsFillPersonFill } from 'react-icons/bs';
+import "../css/navbar.css"
 
 export default function Navbar() {
   const dispatch = useDispatch();
@@ -28,16 +29,19 @@ export default function Navbar() {
     <Box
       display="flex"
       alignItems="center"
-      paddingX="30px"
-      paddingY="1.5rem"
-      backgroundColor="gray.100"
+      paddingX={4}
+      paddingY="1rem"
+      className="navbar"
+      position='relative'
     >
-      <Box fontSize='25px' maxWidth='100px' marginRight='auto'>
-        <h1>Blog</h1>
+      <Box fontSize='25px' fontWeight="bold" width='25%' color='white' display='flex' justifyContent='flex-start'>
+        <Text>Invisocial</Text>
+      </Box>
+      <Box width='50%' bgColor='white' position='relative' borderRadius="50px" h="2rem">
+        <Text>search box</Text>
       </Box>
       {accessToken && accessToken !== 'undefined' ?
-        
-        <Box maxWidth='200px' marginLeft='auto' display='flex' flexDirection='row' alignItems='center'>
+        <Box width='25%' display='flex' flexDirection='row' alignItems='center' justifyContent='flex-end'>
           <Menu>
             <MenuButton
               as={IconButton}
@@ -45,6 +49,7 @@ export default function Navbar() {
               icon={<Avatar name={user.name} src={user.avatar} marginRight=".5rem" />}
               _hover={{bgColor: 'transparent'}}
               _active={{bgColor: 'transparent'}}
+              bgColor="transparent"
             />
             <MenuList style={{padding: '5px'}}>
               <MenuItem _hover={{ borderRadius: '5px'}}>
@@ -57,7 +62,7 @@ export default function Navbar() {
           </Menu>
         </Box>
         :  
-        <Box maxWidth='200px' marginLeft='auto' display='flex' flexDirection='row' alignItems='center'>
+        <Box width='25%' marginLeft='auto' display='flex' flexDirection='row' alignItems='center'>
             <p>You need to <Link to='/login'><Text as='u'>Login</Text></Link></p>
         </Box> 
       }

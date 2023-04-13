@@ -16,7 +16,7 @@ const authController = {
             if (rows.affectedRows) {
                 return res.status(200).json({ message: "Registered Successfully!" })
             } else {
-                return res.status(401).json({ error: "Error" })
+                return res.status(401).json({ error: "Error", message: error.message  })
             }
             
         } catch (error) {

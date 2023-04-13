@@ -7,7 +7,7 @@ const commentsController = {
                 data: rows
             })
         } catch (error){
-            res.status(400).json({ status: "error" })
+            res.status(400).json({ status: "error", message: error.message  })
         }
     },
     getCommentById: async (req, res) => {
@@ -18,7 +18,7 @@ const commentsController = {
                 data: rows
             })
         } catch (error) {
-            res.status(400).json({ status: "error" })
+            res.status(400).json({ status: "error", message: error.message  })
         }
     },
     create: async (req, res) => {
@@ -33,7 +33,7 @@ const commentsController = {
                 }
             })
         } catch (error) {
-            res.status(400).json({ status: "error" })
+            res.status(400).json({ status: "error", message: error.message  })
         }
     },
     update: async (req, res) => {
@@ -46,7 +46,7 @@ const commentsController = {
                 data: `updated comment ${id}!`
             })
         } catch (error) {
-            res.status(400).json({ status: "error" })
+            res.status(400).json({ status: "error", message: error.message  })
         }
     },
     delete: async (req, res) => {
@@ -58,7 +58,7 @@ const commentsController = {
             })
         } catch (error) {
             console.log(error)
-            res.status(400).json({ status: "error" })
+            res.status(400).json({ status: "error", message: error.message  })
         }
     }
 }
