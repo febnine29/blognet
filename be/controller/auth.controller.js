@@ -26,7 +26,7 @@ const authController = {
     login: async (req, res) => {
         try {
             const { username, password } = req.body
-            const [user ] = await pool.query("select * from auth where username = ?", [username])
+            const [user ] = await pool.query("select * from users where username = ?", [username])
             if (!user[0]) return res.status(401).json({ error: "Invalid username!" })
             
             const { password: hash, id, fullname } = user[0]

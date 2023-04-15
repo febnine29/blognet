@@ -30,7 +30,7 @@ export default function Navbar() {
       display="flex"
       alignItems="center"
       paddingX={4}
-      paddingY="1rem"
+      paddingY=".5rem"
       className="navbar"
       position='relative'
     >
@@ -46,7 +46,7 @@ export default function Navbar() {
             <MenuButton
               as={IconButton}
               aria-label='Options'
-              icon={<Avatar name={user.name} src={user.avatar} marginRight=".5rem" />}
+              icon={<Avatar name={user.name} src={user.avatar} marginRight=".5rem" size='sm'/>}
               _hover={{bgColor: 'transparent'}}
               _active={{bgColor: 'transparent'}}
               bgColor="transparent"

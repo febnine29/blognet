@@ -1,0 +1,13 @@
+.auth{
+    background: radial-gradient(circle, rgba(225,217,255,1) 0%, rgba(150,103,245,1) 92%);
+}
+.inner-left{
+    background: linear-gradient(rgba(39, 11, 96, 0.5), rgba(39, 11, 96, 0.5)),
+        url("https://images.pexels.com/photos/3228727/pexels-photo-3228727.jpeg?auto=compress&cs=tinysrgb&w=1600")
+          center;
+      background-size: cover;
+      padding: 50px;
+      display: flex;
+      flex-direction: column;
+      color: white;
+}

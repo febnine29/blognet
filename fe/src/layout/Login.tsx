@@ -7,6 +7,7 @@ import LoginForm from '../component/LoginForm';
 import { useDispatch } from 'react-redux';
 import { Navigate, useNavigate } from 'react-router';
 import { storeAccessToken } from '../features/auth/AuthSlice';
+import '../css/auth.css'
 interface LoginResponse {
     accessToken: string;
 }
@@ -47,7 +48,7 @@ export default function Login(){
     };
 
     return (
-        <Box w='100vw' h='100vh' position='relative' display='flex' justifyContent='center' alignItems='center' bg='gray.200'>
+        <Box className='auth' w='100vw' h='100vh' position='relative' display='flex' justifyContent='center' alignItems='center'>
         {accessToken && accessToken !== 'undefined' ?
             <Navigate to='/' />
         :  

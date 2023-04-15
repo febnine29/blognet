@@ -25,10 +25,15 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
   };
 
   return (
-    <Box  p='20px' bg='white' borderRadius={10}>
-        <Text fontSize='25px' fontWeight='bold'>Blog</Text>
+    <Box className='auth-form' display='flex' flexDirection='row' borderRadius='10px' w='70%' h='auto'>
+        <Box className='inner-left' p='40px' width='55%' bgColor='lightgray' textAlign='left' borderRadius='10px 0px 0px 10px'>
+          <Text fontSize='5xl'>Invisocial.</Text>
+          <Text>an social app for student</Text>
+        </Box>
+        <Box className='inner-right' p='2rem' bg='white' width='45%' textAlign='left' borderRadius='0px 10px 10px 0px'>
+        <Text fontSize='25px' fontWeight='bold' mb={5} color='#6304c2'>Login</Text>
         <form onSubmit={handleSubmit}>
-            <FormLabel>Username</FormLabel>
+        <FormLabel>Username</FormLabel>
         <Input variant='filled' placeholder='Input your username'
             onChange={(e) => setUsername(e.target.value)}
         />
@@ -47,10 +52,16 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
             </Button>
         </InputRightElement>
         </InputGroup>
-        <Button type='submit' variant='solid' colorScheme='facebook' w='100px' mt={5}>Login</Button>
+        <Button type='submit' variant='solid' bgColor='#6304c2' color='white' w='100px' mt={5}
+          _hover={{color: '#6304c2', background: 'white', borderWidth: '2px', borderColor: '#6304c2'}}
+        >
+          Login
+        </Button>
         </form>
         <Text color='gray.600' mt={10}>You don't have an account? <Link to='/register'><Text as='u'>Sign-Up</Text></Link></Text>
+        </Box>
     </Box>
+    
   );
 };
 export default LoginForm

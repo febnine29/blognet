@@ -3,16 +3,14 @@ const postsController = {
     getAll: async (req, res) => {
         try{
             const [rows, fields] = await pool.query('select * from posts')
-            const datas = rows.map(row => {
-                const imgArray = JSON.parse(row.img)
-                const parsedImgArray = imgArray.map(img => JSON.parse(img))
+            const data = rows.map(row => {
                 return {
-                  ...row,
-                  img: parsedImgArray
-                }
-              })
+                    ...row,
+                    img: JSON.parse(row.img)
+                    }
+                })
             res.json({
-                datas
+                data
             })
         } catch (error){
             res.status(401).json({status: "error", message: error.message })
@@ -32,7 +30,7 @@ const postsController = {
                 data
             })
         } catch (error) {
-            res.status(401).json({status: "error" })
+            res.status(401).json({status: "error", message: error.message })
         }
     },
     create: async (req, res) => {
