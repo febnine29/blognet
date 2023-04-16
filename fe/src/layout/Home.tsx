@@ -10,6 +10,7 @@ import axios from 'axios'
 import '../css/home.css'
 import NavSide from '../component/NavSide';
 import RecentSide from '../component/RecentSide';
+import SinglePost from '../component/SinglePost';
 interface LoginResponse {
     accessToken: string;
 }
@@ -57,9 +58,13 @@ export default function Home(){
                     </Box>
                     {loading && <Spinner />}
                     {posts?.map((post) => (
-                        <Box className='shadow-box' key={post.id} px={2} py={4} mb={4} bgColor='white' borderRadius='10px'>
-                            <Box>{post.descrip}</Box>
-                        </Box>
+                        <SinglePost 
+                          key={post.id} 
+                          descrip={post.descrip} 
+                          img={post.img} 
+                          userId={post.userId} 
+                          createdAt={post.createdAt}
+                        />
                     ))}
                 </Box>
                 <RecentSide />

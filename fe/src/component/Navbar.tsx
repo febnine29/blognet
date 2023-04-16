@@ -62,8 +62,17 @@ export default function Navbar() {
           </Menu>
         </Box>
         :  
-        <Box width='25%' marginLeft='auto' display='flex' flexDirection='row' alignItems='center'>
-            <p>You need to <Link to='/login'><Text as='u'>Login</Text></Link></p>
+        <Box width='25%' display='flex' flexDirection='row' alignItems='center' justifyContent="flex-end">
+            <Button 
+              onClick={() => navigate("/login")} 
+              bgColor="transparent"
+              color="white"
+              borderWidth="2px"
+              borderColor="white"
+              _hover={{color: "#6304c2", background: "white"}}
+            >
+              Login
+            </Button>
         </Box> 
       }
 
