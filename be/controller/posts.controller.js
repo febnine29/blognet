@@ -51,7 +51,7 @@ const postsController = {
             const { descrip, img, userId, createdAt } = req.body
             const {id} = req.params
             const sql = "update posts set descrip = ?, img = ?, userId = ?, createdAt = ? where id = ?"
-            const [rows, fields] = await pool.query(sql, [descrip, img, userId, createdAt, id]) 
+            const [rows, fields] = await pool.query(sql, [descrip, JSON.stringify(img), userId, createdAt, id]) 
             res.status(201).json({
                 title: `updated post ${id}!`
             })

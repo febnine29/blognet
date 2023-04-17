@@ -53,13 +53,14 @@ export default function Home(){
             <Box className='main-body' w='100vw' h='100%' p={4} display='flex' flexDirection='row' bgColor="#fbfbfb">
                 <NavSide />
                 <Box className='blog-side' w='50%'> 
-                    <Box className='create-status shadow-box' px={2} py={4} mb={4} bgColor='white' borderRadius='10px'>
+                    <Box className='create-status shadow-box' px={2} py={4} mb={4} bgColor='white' borderRadius='10px' maxW='590px'>
                             tét
                     </Box>
                     {loading && <Spinner />}
                     {posts?.map((post) => (
                         <SinglePost 
                           key={post.id} 
+                          postId={post.id}
                           descrip={post.descrip} 
                           img={post.img} 
                           userId={post.userId} 

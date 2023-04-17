@@ -13,7 +13,7 @@ app.use(cors())
 app.use('/api/v1/posts', postsRouter)
 app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/comments', commentsRouter)
-app.use('/api/v1/isLiked', likesRouter)
+app.use('/api/v1/likes', likesRouter)
 
 const PORT = process.env.PORT || 5000
 

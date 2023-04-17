@@ -12,37 +12,37 @@ export default function NavSide(){
         <Box className='nav-side' w='25%' paddingRight={5}>
             <Flex flexDirection="column" justifySelf="flex-start">
             <Link to="/">
-            <Flex
-                padding={3}
-                alignItems="center"
-                _hover={{ bgColor: "gray.200", borderRadius: '10px' }}
-                cursor="pointer"
-                style={{fontWeight: 'bold', color: '#878787'}}
-            >
-                <Icon as={AiFillHome} fontSize={18} mr={2} color='blue.500'/> Home
-            </Flex>
+                <Flex
+                    padding={3}
+                    alignItems="center"
+                    _hover={{ bgColor: "gray.200", borderRadius: '10px' }}
+                    cursor="pointer"
+                    style={{fontWeight: 'bold', color: '#878787'}}
+                >
+                    <Icon as={AiFillHome} fontSize={18} mr={2} color='blue.500'/> Home
+                </Flex>
             </Link>
             <Link to="/">
-            <Flex
-                padding={3}
-                alignItems="center"
-                _hover={{ bgColor: "gray.200", borderRadius: '10px' }}
-                cursor="pointer"
-                style={{fontWeight: 'bold', color: '#878787'}}
-            >
-                <Icon as={BsPeopleFill} fontSize={18} mr={2} color='blue.500'/> Friends
-            </Flex>
+                <Flex
+                    padding={3}
+                    alignItems="center"
+                    _hover={{ bgColor: "gray.200", borderRadius: '10px' }}
+                    cursor="pointer"
+                    style={{fontWeight: 'bold', color: '#878787'}}
+                >
+                    <Icon as={BsPeopleFill} fontSize={18} mr={2} color='blue.500'/> Friends
+                </Flex>
             </Link>
 
             <Link to="/">
-            <Flex
-                padding={3}
-                alignItems="center"
-                _hover={{ bgColor: "gray.200", borderRadius: '10px' }}
-                cursor="pointer"
-            >
-                Projects
-            </Flex>
+                <Flex
+                    padding={3}
+                    alignItems="center"
+                    _hover={{ bgColor: "gray.200", borderRadius: '10px' }}
+                    cursor="pointer"
+                >
+                    Projects
+                </Flex>
             </Link>
         </Flex>
     </Box>

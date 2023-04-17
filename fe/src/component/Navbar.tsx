@@ -37,7 +37,7 @@ export default function Navbar() {
       <Box fontSize='25px' fontWeight="bold" width='25%' color='white' display='flex' justifyContent='flex-start'>
         <Text>Invisocial</Text>
       </Box>
-      <Box width='50%' bgColor='white' position='relative' borderRadius="50px" h="2rem">
+      <Box width='50%' bgColor='white' position='relative' borderRadius="50px" h="2rem" px={2}>
         <Text>search box</Text>
       </Box>
       {accessToken && accessToken !== 'undefined' ?

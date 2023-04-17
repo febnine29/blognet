@@ -1,8 +1,9 @@
 const pool = require("../database/index")
 const likesController = {
-    getAll: async (req, res) => {
+    getLikes: async (req, res) => {
         try{
-            const [rows, fields] = await pool.query('select * from likes')
+            const {id} = req.params
+            const [rows, fields] = await pool.query('select * from likes where postId = ?',[id])
             res.status(201).json({
                 data: rows
             })
@@ -16,10 +17,8 @@ const likesController = {
             const sql = "insert into likes (userId, postId) values (?, ?)"
             const [rows, fields] = await pool.query(sql, [userId, postId])
             res.status(201).json({
-                data: {
-                    result: "liked!",
-                    rows
-                }
+                result: "liked!",
+                rows
             })
         } catch (error) {
             res.status(400).json({ status: "error", message: error.message  })
