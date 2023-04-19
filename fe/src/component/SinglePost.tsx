@@ -7,7 +7,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { BsHeart, BsHeartFill } from 'react-icons/bs';
 import { FaHeart, FaRegHeart, FaRegComment, FaRegShareSquare } from 'react-icons/fa'
-// import { getLikes } from '../type/common';
+import { IComment } from '../type/common';
 interface SinglePostProp{
     postId: number;
     userId: number;
@@ -22,6 +22,11 @@ export default function SinglePost({postId, descrip, userId, img, createdAt}: Si
     const [output, setOutput] = React.useState('')
     const [username, setUsername] = React.useState<string | null>(null)
     const [likes, setLikes] = React.useState<string[] | null>(null)
+    const [comments, setCmt] = React.useState<IComment[] | null>(null)
+    const [showComment, setShowComment] = React.useState(false)
+    const userInformation = JSON.parse(localStorage.getItem('userInformation') || '{}');
+    const idUser = userInformation.id;
+    console.log(userInformation)
     const validate = () => {
         if(date !== 'a few seconds ago' && date !== 'a minute ago'){
             setOutput(dateFormat)
@@ -40,12 +45,21 @@ export default function SinglePost({postId, descrip, userId, img, createdAt}: Si
             } catch (error){
                 console.log(error)
             }
+        }
+        const getComments = async () => {
+            try {
+                axios.get(`http://localhost:5000/api/v1/comments/cmt=${postId}`)
+                .then(response => {
+                    setCmt(response.data.comment)
+                })
+            } catch (error){
+                console.log(error)
             }
-        getLikes()
-        // getLikes({pId: postId})
-        // .then(response => console.log(response))
-        // .catch(err => console.log(err))
+        }
+        getLikes();
+        getComments()
     }, [postId]);
+    
     useEffect(() => {
         const fetchUser = async () => {
         try {
@@ -64,12 +78,12 @@ export default function SinglePost({postId, descrip, userId, img, createdAt}: Si
         validate()
     },[])
     return (
-        <Box className='shadow-box' px={4} pt={4} pb={1} mb={4} bgColor='white' borderRadius='10px' maxW="590px">
+        <Box className='shadow-box' px={4} pt={4} pb={1} mb={4} bgColor='white' borderRadius='10px' maxW="590px" minW="500px">
             <Flex className='post-info' alignItems='center'>
                 <Avatar size='md' src={img} />
                 <Box ml={2}>
                     <Text fontWeight='bold' textAlign='left' fontSize='17px'>{username}</Text>
-                    <Text fontSize='13px' color='gray' textAlign='left'>{output}</Text>
+                    <Text fontSize='12px' color='gray' textAlign='left'>{output}</Text>
                 </Box>
             </Flex>
             <Box className='description' textAlign='left' py={4}>{descrip}</Box>
@@ -89,6 +103,7 @@ export default function SinglePost({postId, descrip, userId, img, createdAt}: Si
                         size='sm'
                         leftIcon={<Icon as={FaRegHeart} fontSize='18px' color="#676175"/>}
                         color="#676175"
+                        fontWeight="medium"
                     >
                         Like
                     </Button>
@@ -97,6 +112,8 @@ export default function SinglePost({postId, descrip, userId, img, createdAt}: Si
                         size='sm'
                         leftIcon={<Icon as={FaRegComment} fontSize='18px' color="#676175"/>}
                         color="#676175"
+                        fontWeight="medium"
+                        onClick={() => setShowComment(!showComment)}
                     >
                         Comment
                     </Button>
@@ -105,10 +122,18 @@ export default function SinglePost({postId, descrip, userId, img, createdAt}: Si
                         size='sm'
                         leftIcon={<Icon as={FaRegShareSquare} fontSize='18px' color="#676175"/>}
                         color="#676175"
+                        fontWeight="medium"
                     >
                         Share
                     </Button>
                 </Flex>
+                {showComment && (
+                <Flex className="comment-box" w="100%" borderTopWidth="1px" borderTopColor='gray.200' py={2}>
+                    {comments?.map((comment) => (
+                        <Box key={comment.id}>{comment.descrip}</Box>
+                    ))}
+                </Flex>
+                )}
             </Flex>
         </Box>
     )

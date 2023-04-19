@@ -37,11 +37,7 @@ const authController = {
                 const accessToken = jwt.sign({ userId: id }, '3812932sjad34&*@', { expiresIn: '1h' });
                 return res.json({ 
                     accessToken,
-                    data: { 
-                        userId: id,
-                        fullname,
-                        username
-                    }
+                    infor: user
                 })
             }
             return res.status(401).json({ error: "Wrong password!" })

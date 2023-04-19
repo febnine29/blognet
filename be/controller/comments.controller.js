@@ -13,9 +13,9 @@ const commentsController = {
     getCommentById: async (req, res) => {
         try {
             const { id } = req.params
-            const [rows, fields] = await pool.query("select * from comments where id = ?", [id])
+            const [rows, fields] = await pool.query("select * from comments where postId = ?", [id])
             res.status(201).json({
-                data: rows
+                comment: rows
             })
         } catch (error) {
             res.status(400).json({ status: "error", message: error.message  })
@@ -27,7 +27,7 @@ const commentsController = {
             const sql = "insert into comments (descrip, createdAt, userId, postId) values (?, ?, ?, ?)"
             const [rows, fields] = await pool.query(sql, [descrip, createdAt, userId, postId])
             res.status(201).json({
-                data: {
+                comment: {
                     result: "commented!",
                     rows
                 }
@@ -43,7 +43,7 @@ const commentsController = {
             const sql = "update comments set descrip = ?, createdAt = ?, userId = ?, postId = ? where id = ?"
             const [rows, fields] = await pool.query(sql, [descrip, createdAt, userId, postId, id]) 
             res.status(201).json({
-                data: `updated comment ${id}!`
+                comment: `updated comment ${id}!`
             })
         } catch (error) {
             res.status(400).json({ status: "error", message: error.message  })
@@ -51,15 +51,18 @@ const commentsController = {
     },
     delete: async (req, res) => {
         try {
-            const { id } = req.params
-            const [rows, fields] = await pool.query("delete from comments where id = ?", [id])
-            res.status(200).json({
-                data: `deleted comment!`
-            })
+          const { postId, userId } = req.body;
+          const [rows, fields] = await pool.query(
+            "delete from comments where postId = ? and userId = ?",
+            [postId, userId]
+          );
+          res.status(200).json({
+            data: `deleted comment!`,
+          });
         } catch (error) {
-            console.log(error)
-            res.status(400).json({ status: "error", message: error.message  })
+          console.log(error);
+          res.status(400).json({ status: "error", message: error.message });
         }
-    }
+      }
 }
 module.exports = commentsController
