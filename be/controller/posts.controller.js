@@ -2,6 +2,7 @@ const pool = require("../database/index")
 const postsController = {
     getAll: async (req, res) => {
         try{
+            // const [rows, fields] = await pool.query('select * from posts LEFT JOIN likes ON posts.id = likes.postId ')
             const [rows, fields] = await pool.query('select * from posts')
             const data = rows.map(row => {
                 return {
@@ -35,9 +36,9 @@ const postsController = {
     },
     create: async (req, res) => {
         try {
-            const { descrip, img, userId, createdAt } = req.body
-            const sql = "insert into posts (descrip, img, userId, createdAt) values (?, ?, ?, ?)"
-            const [rows, fields] = await pool.query(sql, [descrip, JSON.stringify(img), userId, createdAt])
+            const { descrip, img, userId, createdAt, isLiked } = req.body
+            const sql = "insert into posts (descrip, img, userId, createdAt, isLiked) values (?, ?, ?, ?, ?)"
+            const [rows, fields] = await pool.query(sql, [descrip, JSON.stringify(img), userId, createdAt, isLiked])
             res.status(201).json({
                 data: "Created new post!"
             })
@@ -46,12 +47,25 @@ const postsController = {
             res.status(401).json({ status: "error" })
         }
     },
+    updateIsLiked: async (req, res) => {
+        try {
+            const { isLiked } = req.body
+            const {id} = req.params
+            const sql = "update posts set isLiked = ? where id = ?"
+            const [rows, fields] = await pool.query(sql, [isLiked, id]) 
+            res.status(201).json({
+                title: `Successful!`
+            })
+        } catch (error) {
+            res.status(401).json({ status: "error" })
+        }
+    },
     update: async (req, res) => {
         try {
-            const { descrip, img, userId, createdAt } = req.body
+            const { descrip, img, userId, createdAt, isLiked } = req.body
             const {id} = req.params
-            const sql = "update posts set descrip = ?, img = ?, userId = ?, createdAt = ? where id = ?"
-            const [rows, fields] = await pool.query(sql, [descrip, JSON.stringify(img), userId, createdAt, id]) 
+            const sql = "update posts set descrip = ?, img = ?, userId = ?, createdAt = ?, isLiked = ? where id = ?"
+            const [rows, fields] = await pool.query(sql, [descrip, JSON.stringify(img), userId, createdAt, isLiked, id]) 
             res.status(201).json({
                 title: `updated post ${id}!`
             })

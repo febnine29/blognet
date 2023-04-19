@@ -5,7 +5,7 @@ const likesController = {
             const {id} = req.params
             const [rows, fields] = await pool.query('select * from likes where postId = ?',[id])
             res.status(201).json({
-                data: rows
+                result: rows
             })
         } catch (error){
             res.status(400).json({ status: "error", message: error.message  })
@@ -26,10 +26,15 @@ const likesController = {
     },
     delete: async (req, res) => {
         try {
-            const { id } = req.params
-            const [rows, fields] = await pool.query("delete from likes where postId = ?", [id])
+            const { postId, userId } = req.body
+            // const [rows, fields] = 
+            // const query = await pool.query("delete from likes where postId = ? and userId = ?", [userId, postId])
+            const [rows, fields] = await pool.query("select id from likes where userId = ? and postId = ?", [userId,postId])
+            const { id } = rows[0]
+            const [delRow, delField] = await pool.query("delete from likes where id = ?", [id])
+            // console.log(rows.id);
             res.status(200).json({
-                data: `unliked!`
+                result: `unliked!`
             })
         } catch (error) {
             console.log(error)

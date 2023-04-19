@@ -7,5 +7,5 @@ router.get('/', commentsController.getAll)
 router.get('/cmt=:id', commentsController.getCommentById)
 router.post('/', commentsController.create)
 router.put('/:id', commentsController.update)
-router.delete('/', commentsController.delete)
+router.post('/', commentsController.delete)
 module.exports = router

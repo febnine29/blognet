@@ -7,5 +7,6 @@ router.get('/getAllPosts', postsController.getAll)
 router.get('/getPostId=:id', postsController.getById)
 router.post('/createPost', postsController.create)
 router.put('/updatePostId=:id', postsController.update)
+router.put('/isLiked=:id', postsController.updateIsLiked)
 router.delete('/deletePostId=:id', postsController.delete)
 module.exports = router

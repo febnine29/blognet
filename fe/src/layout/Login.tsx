@@ -25,7 +25,7 @@ export default function Login(){
             });
             const data: LoginResponse = response.data;
             dispatch(storeAccessToken(data.accessToken));
-            localStorage.setItem('userInformation', JSON.stringify(response.data.data))
+            localStorage.setItem('userInformation', JSON.stringify(response.data.infor))
             localStorage.setItem('accessToken', data.accessToken);
             toast({
                 title: 'Login successful',
