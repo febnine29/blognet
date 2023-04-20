@@ -9,9 +9,10 @@ import { BsHeart, BsHeartFill } from 'react-icons/bs';
 import { FaHeart, FaRegHeart, FaRegComment, FaRegShareSquare } from 'react-icons/fa'
 import { IComment, ILike, like, unLike, updateLiked } from '../type/common';
 import  Comments  from './Comments'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getAllPosts } from '../type/PostSlice';
 import { AppDispatch } from '../app/store';
+import { commentSelector, getAllComments } from '../type/CommentSlice';
 interface SinglePostProp{
     postId: number;
     userId: number;
@@ -23,6 +24,9 @@ interface SinglePostProp{
 dayjs.extend(relativeTime)
 export default function SinglePost({postId, descrip, userId, img, createdAt, isLiked}: SinglePostProp){
     const dispatch = useDispatch<AppDispatch>()
+    useEffect(() => {
+        dispatch(getAllComments(postId))
+    },[postId])
     // date format:
     const date = dayjs(createdAt).fromNow();
     const dateFormat = dayjs(createdAt).format('DD/MM lúc hh:mm')
@@ -30,7 +34,8 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
     // post actions:
     const [username, setUsername] = React.useState<string | null>(null)
     const [likes, setLikes] = React.useState<ILike[] | null>(null)
-    const [comments, setCmt] = React.useState<IComment[] | null>(null)
+    const {comments} = useSelector(commentSelector)
+    const [cmtArray, setCmt] = React.useState<IComment[] | null>(null)
     const [showComment, setShowComment] = React.useState(false)
     // fetch user information:
     const userInformation = JSON.parse(localStorage.getItem('userInformation') || '{}');
@@ -66,6 +71,7 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
     useEffect(() => {
         getLikes();
         getComments()
+        console.log('comments', comments)
     }, [postId]);
     const setLike = async () => {
         try {
@@ -102,12 +108,14 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
     }
     const handleLike = async () => {
         await setLike()
-        updateLiked("1") 
+        await updateLiked("1") 
+        await getLikes()
         dispatch(getAllPosts())
     }
     const handleUnLike = async () => {
         await unLike()
-        updateLiked("0") 
+        await updateLiked("0") 
+        await getLikes()
         dispatch(getAllPosts())
     }
     // get user name on post:
@@ -126,7 +134,6 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
 
     useEffect(() => {
         validate();
-        console.log('isLIked', isLiked)
     },[])
 
     return (
@@ -149,10 +156,10 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                             </Text>
                         </Flex>
                     : ''}
-                    {comments?.length! > 0 ? 
+                    {cmtArray?.length! > 0 ? 
                         <Flex className='comment-stat' ml='auto' flexDirection='row' alignItems='center' textAlign='left' justifyContent='flex-end'>
                             <Text fontSize='13px' color='gray' textAlign='left'>
-                                {comments?.length! > 1 ? `${comments?.length!} comments` : `${comments?.length!} comment`}
+                                {cmtArray?.length! > 1 ? `${cmtArray?.length!} comments` : `${cmtArray?.length!} comment`}
                             </Text>
                         </Flex>
                     : ''}
@@ -189,7 +196,7 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                     </Button>
                 </Flex>
                 {showComment && (
-                    <Comments comments={comments} userId={userInformation[0].id} postId={postId}/>
+                    <Comments comments={cmtArray ? cmtArray : comments} userId={userInformation[0].id} postId={postId}/>
                 )}
             </Flex>
         </Box>

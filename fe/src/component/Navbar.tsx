@@ -55,7 +55,7 @@ export default function Navbar() {
               <MenuItem _hover={{ borderRadius: '5px'}}>
                 <Icon as={BsFillPersonFill} fontSize={19} marginRight={2}/>Profile
               </MenuItem>
-              <MenuItem onClick={handleLogout} _hover={{ borderRadius: '5px'}}>
+              <MenuItem onClick={handleLogout} _hover={{ borderRadius: '5px'}} color="red">
                 <Icon as={TbLogout} fontSize={20} marginRight={2}/>Log-out
               </MenuItem>
             </MenuList>

@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from 'axios'
 import { getAllPostsApi, ResponseGetPosts } from "./common";
 import { IPost } from "./common";
-interface TaskState{
+interface PostState{
     posts: IPost[] | null;
     postLoading: boolean
 }
@@ -13,12 +13,12 @@ export const getAllPosts = createAsyncThunk("post/getAll", async () => {
     return response.data;
   });
 
-const initialState: TaskState = {
+const initialState: PostState = {
     posts: null,
     postLoading: false
 };
 export const PostSlice = createSlice({
-    name: "task",
+    name: "post",
     initialState,
     reducers: {
     },
@@ -30,7 +30,6 @@ export const PostSlice = createSlice({
       builder.addCase(getAllPosts.fulfilled, (state, { payload }) => {
         state.postLoading = false
         state.posts = payload?.data;
-        console.log('result:', payload?.data)
       });
       builder.addCase(getAllPosts.rejected, (state, action) => {
         state.postLoading = false

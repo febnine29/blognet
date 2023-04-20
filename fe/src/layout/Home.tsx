@@ -27,7 +27,6 @@ export default function Home(){
   React.useEffect(() => {
       dispatch(getAllPosts())
     }, []);
-  console.log('posts: ', posts)
   
   return (
       <Box>
