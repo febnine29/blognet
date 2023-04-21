@@ -2,7 +2,7 @@ const pool = require("../database/index")
 const commentsController = {
     getAll: async (req, res) => {
         try{
-            const [rows, fields] = await pool.query('select * from comments')
+            const [rows, fields] = await pool.query('select * from comments order by id desc')
             res.status(201).json({
                 data: rows
             })

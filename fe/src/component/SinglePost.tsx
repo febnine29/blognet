@@ -12,7 +12,7 @@ import  Comments  from './Comments'
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllPosts } from '../type/PostSlice';
 import { AppDispatch } from '../app/store';
-import { commentSelector, getAllComments } from '../type/CommentSlice';
+import { commentSelector, getAllComments} from '../type/CommentSlice';
 interface SinglePostProp{
     postId: number;
     userId: number;
@@ -24,15 +24,15 @@ interface SinglePostProp{
 dayjs.extend(relativeTime)
 export default function SinglePost({postId, descrip, userId, img, createdAt, isLiked}: SinglePostProp){
     const dispatch = useDispatch<AppDispatch>()
-    useEffect(() => {
-        dispatch(getAllComments(postId))
-    },[postId])
+    // useEffect(() => {
+    //     dispatch(getCommentById(postId))
+    // },[postId])
     // date format:
     const date = dayjs(createdAt).fromNow();
     const dateFormat = dayjs(createdAt).format('DD/MM lúc hh:mm')
     const [output, setOutput] = React.useState('')
     // post actions:
-    const [username, setUsername] = React.useState<string | null>(null)
+    const [username, setUsername] = React.useState<string>('')
     const [likes, setLikes] = React.useState<ILike[] | null>(null)
     const {comments} = useSelector(commentSelector)
     const [cmtArray, setCmt] = React.useState<IComment[] | null>(null)
@@ -58,20 +58,8 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
             console.log(error)
         }
     }
-    const getComments = async () => {
-        try {
-            await axios.get(`http://localhost:5000/api/v1/comments/cmt=${postId}`)
-            .then(response => {
-                setCmt(response.data.comment)
-            })
-        } catch (error){
-            console.log(error)
-        }
-    }
     useEffect(() => {
         getLikes();
-        getComments()
-        console.log('comments', comments)
     }, [postId]);
     const setLike = async () => {
         try {
@@ -139,7 +127,7 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
     return (
         <Box className='shadow-box' px={4} pt={4} pb={1} mb={4} bgColor='white' borderRadius='10px' maxW="590px" minW="500px">
             <Flex className='post-info' alignItems='center'>
-                <Avatar size='md'/>
+                <Avatar name={username} size='md'/>
                 <Box ml={2}>
                     <Text fontWeight='bold' textAlign='left' fontSize='17px'>{username}</Text>
                     <Text fontSize='12px' color='gray' textAlign='left'>{output}</Text>
@@ -196,7 +184,7 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                     </Button>
                 </Flex>
                 {showComment && (
-                    <Comments comments={cmtArray ? cmtArray : comments} userId={userInformation[0].id} postId={postId}/>
+                    <Comments userId={userInformation[0].id} postId={postId}/>
                 )}
             </Flex>
         </Box>

@@ -3,7 +3,7 @@ const postsController = {
     getAll: async (req, res) => {
         try{
             // const [rows, fields] = await pool.query('select * from posts LEFT JOIN likes ON posts.id = likes.postId ')
-            const [rows, fields] = await pool.query('select * from posts')
+            const [rows, fields] = await pool.query('select * from posts order by id desc')
             const data = rows.map(row => {
                 return {
                     ...row,

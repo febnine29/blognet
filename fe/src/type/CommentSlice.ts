@@ -1,16 +1,38 @@
 import { RootState } from "../app/store";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from 'axios'
-import { IComment } from "./common";
+import { IComment, SingleComment } from "./common";
+import { create } from "domain";
 interface CommentState{
     comments: IComment[] | null;
     commentLoading: boolean
 }
-export const getAllComments = createAsyncThunk("comment/getAll", async (postId: number) => {
+export const getCommentById = createAsyncThunk("comment/getAll", async (postId: number) => {
     const response = await axios.get(`http://localhost:5000/api/v1/comments/cmt=${postId}`);
     return response.data;
   });
-
+export const getAllComments = createAsyncThunk("comment/getComments", async () => {
+    const response = await axios.get('http://localhost:5000/api/v1/comments')
+    return response.data
+})
+export const newComment = createAsyncThunk(
+    "comment/new", 
+    async ({descrip, postId, userId, createdAt}:SingleComment, { dispatch }) => {
+    try {
+        const response = await axios.post(`http://localhost:5000/api/v1/comments`,{
+            descrip,
+            postId,
+            userId,
+            createdAt
+        })
+        if(response.status === 201){
+            dispatch(getAllComments())
+        }
+        console.log('reponse new comment:',response)
+    } catch (error) {
+        console.log(error)
+    }
+})
 const initialState: CommentState = {
     comments: null,
     commentLoading: false
@@ -27,8 +49,8 @@ export const CommentSlice = createSlice({
       });
       builder.addCase(getAllComments.fulfilled, (state, { payload }) => {
         state.commentLoading = false
-        state.comments = payload?.comment;
-        // console.log('comments:', payload.comment)
+        state.comments = payload?.data;
+        // console.log('comments:', payload.data)
       });
       builder.addCase(getAllComments.rejected, (state, action) => {
         state.commentLoading = false

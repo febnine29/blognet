@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Text, Avatar, Button, Menu,IconButton, MenuGroup, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
+import { Box,Flex, Text, Avatar, Button, Menu,IconButton, MenuGroup, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
 import { Icon } from '@chakra-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../app/store';
@@ -17,7 +17,8 @@ export default function Navbar() {
   const navigate = useNavigate();
   const accessToken = localStorage.getItem('accessToken')
   const user = JSON.parse(localStorage.getItem('userInformation') || '{}');
-
+  console.log(user);
+  
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('userInformation');
@@ -37,7 +38,7 @@ export default function Navbar() {
       <Box fontSize='25px' fontWeight="bold" width='25%' color='white' display='flex' justifyContent='flex-start'>
         <Text>Invisocial</Text>
       </Box>
-      <Box width='50%' bgColor='white' position='relative' borderRadius="50px" h="2rem" px={2}>
+      <Box width='50%' bgColor='white' position='relative' borderRadius="50px" h="40px" px={1}>
         <Text>search box</Text>
       </Box>
       {accessToken && accessToken !== 'undefined' ?
@@ -46,14 +47,23 @@ export default function Navbar() {
             <MenuButton
               as={IconButton}
               aria-label='Options'
-              icon={<Avatar name={user.name} src={user.avatar} marginRight=".5rem" size='sm'/>}
+              icon={<Avatar name={user[0].name} src={user.avatar} marginRight=".5rem" w='40px' h='40px'/>}
               _hover={{bgColor: 'transparent'}}
               _active={{bgColor: 'transparent'}}
               bgColor="transparent"
             />
-            <MenuList style={{padding: '5px'}}>
-              <MenuItem _hover={{ borderRadius: '5px'}}>
-                <Icon as={BsFillPersonFill} fontSize={19} marginRight={2}/>Profile
+            <MenuList style={{padding: '10px', width:'300px'}} >
+              <MenuItem mb={2} display='flex' flexDirection='column' _hover={{ bgColor: 'transparent'}} borderRadius='10px' sx={{boxShadow: 'rgba(163, 163, 163, 0.5) 0px 0px 4px 0px;'}} bgColor='white'>
+                <Flex w="100%" flexDirection='row' onClick={(e) => console.log('click')} alignItems='center' borderRadius='10px' _hover={{bgColor:'gray.100'}} pt={2} px={1} pb={3}>
+                  <Avatar name={user[0].name} src={user.avatar} marginRight=".5rem" size='sm'/>
+                  <Text fontWeight='bold' fontSize='17px'>{user[0].name}</Text>
+                </Flex>
+                <Box w="100%" h="1.5px" bgColor="gray.200" my={1}></Box>
+                <Flex w="100%" _hover={{bgColor:'gray.100'}} p={2} justifyContent='center' alignItems='center' borderRadius='10px'>
+                  <Text align='center' color='rgba(22, 0, 163, 0.7)' fontWeight='bold'>
+                    See Profile
+                  </Text>
+                </Flex>
               </MenuItem>
               <MenuItem onClick={handleLogout} _hover={{ borderRadius: '5px'}} color="red">
                 <Icon as={TbLogout} fontSize={20} marginRight={2}/>Log-out

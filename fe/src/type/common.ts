@@ -11,6 +11,12 @@ export interface IComment{
     postId: number;
     createdAt: string
 }
+export interface SingleComment{
+    descrip: string;
+    userId: number;
+    postId: number;
+    createdAt: string
+}
 export interface ILike{
     id: number;
     userId: number;
@@ -18,6 +24,13 @@ export interface ILike{
 }
 export interface IPost{
     id: number;
+    descrip: string;
+    userId: number;
+    img: string[];
+    createdAt: string;
+    isLiked: string
+}
+export interface SinglePost{
     descrip: string;
     userId: number;
     img: string[];
