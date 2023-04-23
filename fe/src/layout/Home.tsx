@@ -28,10 +28,16 @@ export default function Home(){
   const { isOpen, onOpen, onClose } = useDisclosure()
   const dispatch = useDispatch<AppDispatch>()
   const { posts, postLoading } = useSelector(postSelector)
+  const [name, setName] = useState<string>('')
   const userInformation = JSON.parse(localStorage.getItem('userInformation') || '{}');
   React.useEffect(() => {
       dispatch(getAllPosts());
       dispatch(getAllComments())
+      // const getUserInfo = () => {
+        // const userInformation = JSON.parse(localStorage.getItem('userInformation') || '{}');
+        // setName(userInformation[0].name)
+      // }
+      // getUserInfo()
     }, []);
   
   return (
@@ -42,9 +48,9 @@ export default function Home(){
               <Flex className='blog-side' w='50%' justifyItems='center' alignItems="center" flexDirection='column'> 
                   <Flex flexDirection='column' className='create-status shadow-box' px={3} py={3} mb={4} bgColor='white' borderRadius='10px' maxW='590px' minW="500px">
                     <Flex alignItems='center' w='100%'>
-                      <Avatar name={userInformation[0].name} w='40px' h='40px' mr={2}/>
+                      <Avatar name={userInformation[0]?.name!} w='40px' h='40px' mr={2}/>
                       <Button w="100%" onClick={onOpen} fontWeight='medium' textAlign='left' color="gray.400" borderRadius='50px'>
-                        What are you thinking about, {userInformation[0].name}?...
+                        What are you thinking about, {userInformation[0]?.name!}?...
                       </Button>
                     </Flex>
                     <Box w='100%' h='1px' bgColor='gray.200' my={2}></Box>

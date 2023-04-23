@@ -24,22 +24,19 @@ interface SinglePostProp{
 dayjs.extend(relativeTime)
 export default function SinglePost({postId, descrip, userId, img, createdAt, isLiked}: SinglePostProp){
     const dispatch = useDispatch<AppDispatch>()
-    // useEffect(() => {
-    //     dispatch(getCommentById(postId))
-    // },[postId])
-    // date format:
     const date = dayjs(createdAt).fromNow();
     const dateFormat = dayjs(createdAt).format('DD/MM lúc hh:mm')
     const [output, setOutput] = React.useState('')
-    // post actions:
+    
+    //-----------------post actions:
     const [username, setUsername] = React.useState<string>('')
     const [likes, setLikes] = React.useState<ILike[] | null>(null)
     const {comments} = useSelector(commentSelector)
-    const [cmtArray, setCmt] = React.useState<IComment[] | null>(null)
+    const cmtArray = comments?.filter((comment) => comment.postId === postId)
     const [showComment, setShowComment] = React.useState(false)
-    // fetch user information:
+    //-----------------fetch user information:
     const userInformation = JSON.parse(localStorage.getItem('userInformation') || '{}');
-    // display post created at
+    //-----------------display post created at
     const validate = () => {
         if(date !== 'a few seconds ago' && date !== 'a minute ago'){
             setOutput(dateFormat)
@@ -47,7 +44,7 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
             setOutput(date)
         }
     }
-    // get comments & likes:
+    //-----------------get comments & likes:
     const getLikes = async () => {
         try {
             await axios.get(`http://localhost:5000/api/v1/likes/getLikes=${postId}`)
@@ -106,7 +103,7 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
         await getLikes()
         dispatch(getAllPosts())
     }
-    // get user name on post:
+    //-----------------get user name on post:
     useEffect(() => {
         const fetchUser = async () => {
         try {
@@ -138,7 +135,7 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                 <Flex className='react-stat' flexDirection='row' alignItems='center' textAlign='left' mb={2} px={2}>
                     {likes?.length! > 0 ? 
                         <Flex className='likes-stat' flexDirection='row' alignItems='center' textAlign='left'>
-                            <Icon as={FaHeart} fontSize='16px' color="#20007d" mr={1}/>
+                            <Icon as={FaHeart} fontSize='18px' color="white" mr={1} bgColor="#4200eb" p="3px" borderRadius="50%"/>
                             <Text fontSize='13px' color='gray' textAlign='left'>
                                 {likes?.length! > 1 ? `${likes?.length!} likes` : `${likes?.length!} like`}
                             </Text>
@@ -156,8 +153,13 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                     <Button 
                         bgColor='transparent'
                         size='sm'
-                        leftIcon={<Icon as={isLiked === "1" ? FaHeart : FaRegHeart} fontSize='18px' color="#676175"/>}
-                        color="#676175"
+                        leftIcon={
+                            <Icon as={isLiked === "1" ? FaHeart : FaRegHeart} 
+                            fontSize='18px' 
+                            color={isLiked === "1" ? "#4200eb" : "#676175"}
+                            />
+                        }
+                        color={isLiked === "1" ? "#4200eb" : "#676175"}
                         fontWeight={isLiked === "1" ? "bold" : "medium"}
                         onClick={isLiked === "1" ? handleUnLike : handleLike}
                     >

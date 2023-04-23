@@ -25,10 +25,8 @@ export const newComment = createAsyncThunk(
             userId,
             createdAt
         })
-        if(response.status === 201){
-            dispatch(getAllComments())
-        }
-        console.log('reponse new comment:',response)
+        dispatch(getAllComments())
+        console.log('reponse new comment:',response.status)
     } catch (error) {
         console.log(error)
     }

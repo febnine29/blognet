@@ -4,6 +4,7 @@ export interface Ilogin{
     username: string;
     password: string;
 }
+export const Color = "#4200eb"
 export interface IComment{
     id: number;
     descrip: string;

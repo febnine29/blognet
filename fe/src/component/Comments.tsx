@@ -37,16 +37,6 @@ export default function Comments({ userId, postId}: CommentProp){
             return false
         } else return true
     }
-    const handleComment = async () => {
-        try {
-            axios.post(`http://localhost:5000/api/v1/comments`,{
-                descrip,
-                userId,
-                postId,
-                createdAt
-            })
-        } catch(error){console.log(error)}
-    }
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         dispatch(newComment(comment))
@@ -94,6 +84,9 @@ export default function Comments({ userId, postId}: CommentProp){
                     <Flex w='min-content' minW='428px' position='relative' px={2} py={1} bgColor="#f3f3f3" borderRadius='10px' borderWidth='1px' borderColor='gray.100' flexDirection='column'>
                         <Text fontSize="13px" fontWeight='bold'>{username}</Text>
                         <Box sx={{wordBreak: 'break-word'}} >{comment.descrip}</Box>
+                        {/* <Box position="absolute" bottom="-1rem" left="0" bgColor="#f3f3f3">
+                            test
+                        </Box> */}
                     </Flex>
                 </Flex>
             ))}

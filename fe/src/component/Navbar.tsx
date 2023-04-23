@@ -17,7 +17,6 @@ export default function Navbar() {
   const navigate = useNavigate();
   const accessToken = localStorage.getItem('accessToken')
   const user = JSON.parse(localStorage.getItem('userInformation') || '{}');
-  console.log(user);
   
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
