@@ -10,13 +10,15 @@ export interface IComment{
     descrip: string;
     userId: number;
     postId: number;
-    createdAt: string
+    createdAt: string,
+    isLiked: string
 }
 export interface SingleComment{
     descrip: string;
     userId: number;
     postId: number;
-    createdAt: string
+    createdAt: string,
+    isLiked: string
 }
 export interface ILike{
     id: number;
@@ -31,7 +33,7 @@ export interface IPost{
     createdAt: string;
     isLiked: string
 }
-export interface SinglePost{
+export interface ISinglePost{
     descrip: string;
     userId: number;
     img: string[];

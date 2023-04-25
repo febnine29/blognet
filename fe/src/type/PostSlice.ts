@@ -1,7 +1,7 @@
 import { RootState } from "../app/store";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from 'axios'
-import { getAllPostsApi, ResponseGetPosts, SinglePost } from "./common";
+import { getAllPostsApi, ResponseGetPosts, ISinglePost } from "./common";
 import { IPost } from "./common";
 interface PostState{
     posts: IPost[] | null;
@@ -14,7 +14,7 @@ export const getAllPosts = createAsyncThunk("post/getAll", async () => {
   });
   export const newPost = createAsyncThunk(
     "post/new", 
-    async ({descrip, img, userId, createdAt, isLiked}:SinglePost, { dispatch }) => {
+    async ({descrip, img, userId, createdAt, isLiked}:ISinglePost, { dispatch }) => {
     try {
         const response = await axios.post(`http://localhost:5000/api/v1/posts/createPost`,{
             descrip,

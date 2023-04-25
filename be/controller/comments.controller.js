@@ -23,9 +23,9 @@ const commentsController = {
     },
     create: async (req, res) => {
         try {
-            const { descrip, createdAt, userId, postId } = req.body
-            const sql = "insert into comments (descrip, createdAt, userId, postId) values (?, ?, ?, ?)"
-            const [rows, fields] = await pool.query(sql, [descrip, createdAt, userId, postId])
+            const { descrip, createdAt, userId, postId, isLiked } = req.body
+            const sql = "insert into comments (descrip, createdAt, userId, postId, isLiked) values (?, ?, ?, ?, ?)"
+            const [rows, fields] = await pool.query(sql, [descrip, createdAt, userId, postId, isLiked])
             res.status(201).json({
                 comment: {
                     result: "commented!",

@@ -27,7 +27,8 @@ export default function Comments({ userId, postId}: CommentProp){
         descrip: '',
         userId: userId,
         postId: postId,
-        createdAt: timeCreate
+        createdAt: timeCreate,
+        isLiked: '0'
     })
     const {comments} = useSelector(commentSelector)
     const postComments = comments?.filter((comment) => comment.postId === postId)
@@ -81,12 +82,9 @@ export default function Comments({ userId, postId}: CommentProp){
             {postComments?.map((comment) => (
                 <Flex key={comment.id} textAlign='left' alignItems='center' mb={4} >
                     <Avatar name={username} size="sm" mr={2}></Avatar>
-                    <Flex w='min-content' minW='428px' position='relative' px={2} py={1} bgColor="#f3f3f3" borderRadius='10px' borderWidth='1px' borderColor='gray.100' flexDirection='column'>
+                    <Flex display='inline-block' maxW='428px' position='relative' px={2} py={1} bgColor="#f3f3f3" borderRadius='10px' borderWidth='1px' borderColor='gray.100' flexDirection='column'>
                         <Text fontSize="13px" fontWeight='bold'>{username}</Text>
-                        <Box sx={{wordBreak: 'break-word'}} >{comment.descrip}</Box>
-                        {/* <Box position="absolute" bottom="-1rem" left="0" bgColor="#f3f3f3">
-                            test
-                        </Box> */}
+                        <Box >{comment.descrip}</Box>
                     </Flex>
                 </Flex>
             ))}
