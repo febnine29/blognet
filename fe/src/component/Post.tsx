@@ -1,77 +1,43 @@
-import React, {useEffect, useState, useRef} from 'react';
-import { Box, Button, Flex } from '@chakra-ui/react';
-import axios from 'axios';
-import { getAllPostsApi } from '../type/common';
-import Navbar from './Navbar';
-export default function Post(){
-    const [loading, setLoading] = React.useState(false) // initialize loading state to false
+import React, { useState } from "react";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../firebase";
 
-    React.useEffect(() => {
-        setLoading(true) // set loading to true when component first renders
-        axios.get(getAllPostsApi)
-          .then(res => console.log('res:', res.data))
-          .catch(err => console.log(err))
-          .finally(() => setLoading(false))
-      }, []) 
-      console.log('loading:', loading)
+function Post() {
+    const [images, setImages] = useState<any[]>([]);
+    const [downloadUrl, setDownloadUrl] = useState<string[] | null>(null)
+    const uploadFiles = async () => {
+        for (let i = 0; i < images.length; i++) {
+        const imageRef = ref(storage, `/image/${images[i].name}`);
 
-    const [selectedImages, setSelectedImages] = useState<string[]>([]);
-    const flexRef = useRef<HTMLDivElement>(null);
-    const onSelectFile = (event: any) => {
-        const selectedFiles = event.target.files;
-        const selectedFilesArray = Array.from(selectedFiles);
-
-        const imagesArray = selectedFilesArray.map((file: any) => {
-        return URL.createObjectURL(file);
-        });
-        setSelectedImages([...selectedImages, ...imagesArray])
-        // FOR BUG IN CHROME
-        event.target.value = "";
-    };
-    function deleteHandler(image: any) {
-        setSelectedImages(selectedImages.filter((e) => e !== image));
-        URL.revokeObjectURL(image);
-    }
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            if (flexRef.current) {
-              flexRef.current.scrollTop = flexRef.current.scrollHeight;
-            }
-          }, 1000);
+        const result = await uploadBytes(imageRef, images[i])
+        .then((e) => { 
+            getDownloadURL(ref(storage, `${e.metadata.fullPath}`))
+            .then((url) => {
+                downloadUrl?.push(url)
+            })
+            console.log("success", e.metadata.fullPath); 
+        })
+        .catch((error) => { console.log("error"); });
+        }
+        console.log(downloadUrl);
         
-          return () => clearTimeout(timeoutId);
-    }, [selectedImages]);
-    return (
-        <Box>
-            <Navbar />
-            <Box>
-                <label>
-                + Add Images
-                <br />
-                <input
-                    type="file"
-                    name="images"
-                    onChange={onSelectFile}
-                    multiple
-                    accept="image/png , image/jpeg, image/webp"
-                />
-                </label>
-                <br />
+    };
 
-            <Flex ref={flexRef} flexDirection='column' className="images" maxW={300} maxH={400} overflowY={selectedImages ? 'scroll' : 'unset'} >
-                {selectedImages &&
-                selectedImages.reverse().map((image, index) => {
-                    return (
-                    <Box key={image} className="image">
-                        <img src={image} width='300' height="auto" alt="upload" />
-                        <Button onClick={() => deleteHandler(image)}>
-                            delete image
-                        </Button>
-                    </Box>
-                    );
-                })}
-            </Flex>
-            </Box>
-        </Box>
-    )
+    console.log(images);
+
+    return (
+        <div className="App">
+        <input
+            type="file"
+            multiple
+            onChange={(event: any) => {
+            setImages(event.target.files);
+            }}
+        />
+
+        <button onClick={uploadFiles}>Submit</button>
+        </div>
+    );
 }
+
+export default Post;

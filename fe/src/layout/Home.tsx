@@ -36,7 +36,7 @@ export default function Home(){
       dispatch(getAllComments())
     }, []);
   // const [imageFile, setImageFile] = useState<File[] | null>(null)
-  const [imageFile, setImageFile] = useState<File>()
+  const [imageFile, setImageFile] = useState<FileList>()
   const [downloadURL, setDownloadURL] = useState<string[]>([''])
   const [isUploading, setIsUploading] = useState(false)
   const [progressUpload, setProgressUpload] = useState(0)
@@ -75,55 +75,18 @@ export default function Home(){
         return () => clearTimeout(timeoutId);
   }, [selectedImages]);
   // ----------HANDLE UPLOAD SELECTED IMAGES--------------
-  const handleSelectedFile = (files: any) => {
-    if (files && files[0].size < 15000000) {
-      setImageFile(files[0])
-      console.log(files[0])
+  const handleSelectedFile = (files: FileList) => {
+    if (files) {
+      setImageFile(files)
     } else {
-      console.error('File size is to large')
+      console.error('no file choosen')
     }
-  }
-  const handleUploadFile = async () => {
-    if (imageFile) {
-        const name = imageFile.name
-        const storageRef = ref(storage, `image/${name}`)
-        const uploadTask = uploadBytesResumable(storageRef, imageFile)
-        uploadTask.on(
-          'state_changed',
-          (snapshot) => {
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-            setProgressUpload(progress) 
-            switch (snapshot.state) {
-              case 'paused':
-                console.log('Upload is paused')
-                break
-              case 'running':
-                console.log('Upload is running')
-                break
-            }
-          },
-          (error) => {
-            console.error(error.message)
-          },
-          () => {
-            getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-              //url is download url of file
-              setDownloadURL([...downloadURL, url])
-            })
-          },
-          )
-        }
-      else {
-        console.error('File not found')
-      }
   }
   // const handleUploadFile = async () => {
   //   if (imageFile) {
-  //     for(let i = 0; i < imageFile.length; i++ ){
-  //       const name = imageFile[i].name
+  //       const name = imageFile.name
   //       const storageRef = ref(storage, `image/${name}`)
-  //       const uploadTask = uploadBytesResumable(storageRef, imageFile[i])
+  //       const uploadTask = uploadBytesResumable(storageRef, imageFile)
   //       uploadTask.on(
   //         'state_changed',
   //         (snapshot) => {
@@ -150,17 +113,58 @@ export default function Home(){
   //         },
   //         )
   //       }
-  //     }
   //     else {
   //       console.error('File not found')
   //     }
   // }
+  const handleUploadFile = async () => {
+    if (imageFile) {
+      for(let i = 0; i < imageFile.length; i++ ){
+        const name = imageFile[i].name
+        const storageRef = ref(storage, `image/${name}`)
+        const uploadTask = uploadBytesResumable(storageRef, imageFile[i])
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            setProgressUpload(progress) 
+            switch (snapshot.state) {
+              case 'paused':
+                console.log('Upload is paused')
+                break
+              case 'running':
+                console.log('Upload is running')
+                break
+            }
+          },
+          (error) => {
+            console.error(error.message)
+          },
+          () => {
+            getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+              //url is download url of file
+              setDownloadURL([...downloadURL, url])
+            })
+          },
+          )
+        }
+      }
+      else {
+        console.error('File not found')
+      }
+  }
   const handleUpPost = async () => {
     // dispatch(newPost(newpost))
     await handleUploadFile()
     console.log(downloadURL)
     // onClose()
   }
+
+  useEffect(() => {
+    console.log(imageFile);
+    
+  },[imageFile])
   return (
       <Box>
           <Navbar />
@@ -193,8 +197,11 @@ export default function Home(){
                           placeholder="Select images/files to upload"
                           accept="image/png, image/jpeg, image/webp"
                           onChange={(files) => {
-                            handleSelectedFile(files.target.files);
-                            onSelectFile(files)
+                            if (files.target.files) {
+                              console.log(files.target.files);
+                              handleSelectedFile(files.target.files);
+                              onSelectFile(files)
+                            }
                           }}
                         />
                        <Box>
