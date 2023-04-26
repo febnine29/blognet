@@ -1,5 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios'
+import dayjs from "dayjs";
+
+const date = dayjs()
+export const dateNow = date.format('YYYY-MM-DD HH:mm:ss')
 export interface Ilogin{
     username: string;
     password: string;
@@ -12,6 +16,21 @@ export interface IComment{
     postId: number;
     createdAt: string,
     isLiked: string
+}
+export interface IChildrenCmt{
+    id: number;
+    cmtId: number;
+    descrip: string;
+    userId: number;
+    postId: number;
+    createdAt: string
+}
+export interface SingleChildrenCmt{
+    cmtId: number;
+    descrip: string;
+    userId: number;
+    postId: number;
+    createdAt: string
 }
 export interface SingleComment{
     descrip: string;

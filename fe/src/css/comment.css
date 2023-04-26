@@ -1,0 +1,16 @@
+.tool-comment:nth-child(n) {
+    margin-right: 10px
+}
+.tool-comment ul{
+    list-style: none;
+}
+.tool-comment .item{
+    margin-right: 5px
+}
+.tool-comment .reply{
+    margin-left: 5px
+}
+.swiper-pagination{
+    background: rgba(0,0,0, 0.2);
+    color: white !important;
+}

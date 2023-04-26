@@ -3,12 +3,14 @@ import counterReducer from '../features/counter/counterSlice';
 import AuthSlice from '../features/auth/AuthSlice';
 import PostSlice from '../type/PostSlice';
 import CommentSlice from '../type/CommentSlice';
+import ChildrenCmtSlice from '../type/ChildrenCmtSlice';
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
     auth: AuthSlice,
     posts: PostSlice,
-    comments: CommentSlice
+    comments: CommentSlice,
+    childrenCmt: ChildrenCmtSlice
   },
 });
 

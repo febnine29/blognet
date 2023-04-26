@@ -1,18 +1,23 @@
 import React, { useEffect } from 'react';
-import { Box, Flex, Avatar, Text, Button,Image } from '@chakra-ui/react'
+import { Box, Flex,Menu, MenuButton, MenuList, MenuItem, Avatar, Text, Button,Image } from '@chakra-ui/react'
 import { Icon } from "@chakra-ui/icons"
 import dayjs from 'dayjs';
 import axios from 'axios'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
-import { BsHeart, BsHeartFill } from 'react-icons/bs';
-import { FaHeart, FaRegHeart, FaRegComment, FaRegShareSquare } from 'react-icons/fa'
+import { BsHeart, BsHeartFill, BsThreeDots } from 'react-icons/bs';
+import { FaHeart, FaRegHeart, FaRegComment, FaRegShareSquare,FaRegTrashAlt } from 'react-icons/fa'
 import { IComment, ILike, like, unLike, updateLiked } from '../type/common';
 import  Comments  from './Comments'
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllPosts } from '../type/PostSlice';
+import { deletePost, getAllPosts } from '../type/PostSlice';
 import { AppDispatch } from '../app/store';
 import { commentSelector, getAllComments} from '../type/CommentSlice';
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Navigation } from "swiper";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
 interface SinglePostProp{
     postId: number;
     userId: number;
@@ -25,7 +30,7 @@ dayjs.extend(relativeTime)
 export default function SinglePost({postId, descrip, userId, img, createdAt, isLiked}: SinglePostProp){
     const dispatch = useDispatch<AppDispatch>()
     const date = dayjs(createdAt).fromNow();
-    const dateFormat = dayjs(createdAt).format('DD/MM lúc hh:mm')
+    const dateFormat = dayjs(createdAt).format('DD/MM lúc HH:mm')
     const [output, setOutput] = React.useState('')
     
     //-----------------post actions:
@@ -103,6 +108,9 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
         await getLikes()
         dispatch(getAllPosts())
     }
+    const handleDeletePost = () => {
+        dispatch(deletePost(postId))
+    }
     //-----------------get user name on post:
     useEffect(() => {
         const fetchUser = async () => {
@@ -124,19 +132,49 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
     },[])
 
     return (
-        <Box className='shadow-box' px={4} pt={4} pb={1} mb={4} bgColor='white' borderRadius='10px' maxW="590px" minW="500px">
-            <Flex className='post-info' alignItems='center'>
+        <Box className='shadow-box' px={4} pt={4} pb={1} mb={4} bgColor='white' borderRadius='10px' w='500px'>
+            <Flex className='post-info' alignItems='center' w="100%">
                 <Avatar name={username} size='md'/>
                 <Box ml={2}>
                     <Text fontWeight='bold' textAlign='left' fontSize='17px'>{username}</Text>
                     <Text fontSize='12px' color='gray' textAlign='left'>{output}</Text>
                 </Box>
+                {userId === userInformation[0].id ? 
+                    <Box ml='auto'>
+                    <Menu>
+                        <MenuButton as={Button} rightIcon={<BsThreeDots />} variant='ghost' _hover={{bgColor: 'transparent'}} _active={{bgColor: 'transparent'}}/>
+                        <MenuList px={2}>
+                            <MenuItem 
+                                fontWeight='medium' color='red' borderRadius='5px' icon={<FaRegTrashAlt />}
+                                onClick={handleDeletePost}
+                            >
+                                Delete
+                            </MenuItem>
+                        </MenuList>
+                    </Menu> 
+                    </Box>
+                : undefined}
+                
             </Flex>
             <Box className='description' textAlign='left' py={4}>{descrip}</Box>
-            {img.map((image, index) => (
-                <Image key={index} src={image} />
-            ))}
-
+            {img.length < 1 ? 
+                <Image src={img[0]} mb={2}/>
+            : 
+                <Swiper
+                pagination={{
+                  type: "fraction",
+                }}
+                navigation={true}
+                modules={[Pagination, Navigation]}
+                className="mySwiper"
+              >
+                {img.map((image, index) => (
+                    <SwiperSlide key={index}>
+                        <Image src={image} mb={2}/>
+                    </SwiperSlide>
+                ))}
+              </Swiper>
+            }
             <Flex className='common-tool' flexDirection='column' mt={2}>
                 <Flex className='react-stat' flexDirection='row' alignItems='center' textAlign='left' mb={2} px={2}>
                     {likes?.length! > 0 ? 
@@ -192,7 +230,7 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                     </Button>
                 </Flex>
                 {showComment && (
-                    <Comments userId={userInformation[0].id} postId={postId}/>
+                    <Comments userId={userInformation[0].id} postId={postId} createdAt={createdAt}/>
                 )}
             </Flex>
         </Box>

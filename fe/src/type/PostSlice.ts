@@ -12,25 +12,37 @@ export const getAllPosts = createAsyncThunk("post/getAll", async () => {
   
     return response.data;
   });
-  export const newPost = createAsyncThunk(
-    "post/new", 
-    async ({descrip, img, userId, createdAt, isLiked}:ISinglePost, { dispatch }) => {
-    try {
-        const response = await axios.post(`http://localhost:5000/api/v1/posts/createPost`,{
-            descrip,
-            img, 
-            userId, 
-            createdAt, 
-            isLiked
-        })
-        if(response.status === 201){
-            dispatch(getAllPosts())
-        }
-        console.log('reponse new post:',response)
-    } catch (error) {
-        console.log(error)
-    }
+export const newPost = createAsyncThunk(
+  "post/new", 
+  async ({descrip, img, userId, createdAt, isLiked}:ISinglePost, { dispatch }) => {
+  try {
+      const response = await axios.post(`http://localhost:5000/api/v1/posts/createPost`,{
+          descrip,
+          img, 
+          userId, 
+          createdAt, 
+          isLiked
+      })
+      if(response.status === 201){
+          dispatch(getAllPosts())
+      }
+      console.log('reponse new post:',response)
+  } catch (error) {
+      console.log(error)
+  }
 })
+export const deletePost = createAsyncThunk("post/delete", async (id:number,{ dispatch }) => {
+  try {
+    const response = await axios.delete(`http://localhost:5000/api/v1/posts/deletePostId=${id}`);
+    if(response.status === 200){
+      dispatch(getAllPosts());
+      return response.data;
+    }
+  }
+  catch(error) {
+    console.log(error)
+  }
+});
 const initialState: PostState = {
     posts: null,
     postLoading: false

@@ -1,5 +1,5 @@
 import React,{useState, useRef, useEffect} from 'react';
-import { Box, Image,Progress,IconButton, Input,Text, Spinner, Flex, Divider, useDisclosure,Modal, ModalOverlay, ModalCloseButton, ModalHeader, ModalContent, ModalBody, Button, ModalFooter, Avatar, useFocusEffect } from '@chakra-ui/react';
+import { Box, IconButton, Input,Text, Spinner, Flex, useDisclosure,Modal, ModalOverlay, ModalCloseButton, ModalHeader, ModalContent, ModalBody, Button, ModalFooter, Avatar, useFocusEffect } from '@chakra-ui/react';
 import {Icon} from '@chakra-ui/icons'
 import Navbar from '../component/Navbar';
 import {ISinglePost} from '../type/common';
@@ -17,28 +17,20 @@ import {RiEmotionLaughLine} from 'react-icons/ri'
 import { AppDispatch } from '../app/store';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { storage } from '../firebase';
-interface LoginResponse {
-  accessToken: string;
-}
-interface IPost{
-  id: number;
-  descrip: string;
-  createdAt: string;
-  userId: number;
-  img: string[];
-  isLiked: string
-}
+import { dateNow } from '../type/common';
+import dayjs from 'dayjs'
+import { log } from 'console';
+
 export default function Home(){
   const { isOpen, onOpen, onClose } = useDisclosure()
   const dispatch = useDispatch<AppDispatch>()
-  const countRef = useRef(1)
   const { posts, postLoading } = useSelector(postSelector)
   const userInformation = JSON.parse(localStorage.getItem('userInformation') || '{}');
   useEffect(() => {
       dispatch(getAllPosts());
       dispatch(getAllComments())
     }, []);
-  const [progressUpload, setProgressUpload] = useState(0)
+  const [loading, setLoading] = useState(false)
   const [images, setImages] = useState<any[]>([]);
   const [downloadUrl, setDownloadUrl] = useState<string[]>([])
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
@@ -47,15 +39,16 @@ export default function Home(){
     descrip: "",
     userId: userInformation[0].id,
     img: downloadUrl,
-    createdAt: "2023-04-26 10:11:11",
+    createdAt: dateNow,
     isLiked: "0"
   })
   // ----------SHOW PREVIEW SELECTED IMAGES----------
 
   const uploadFiles = async () => {
     const promises: Promise<any>[] = []
+    if(images){
     for (let i = 0; i < images.length; i++) {
-    const imageRef = ref(storage, `${images[i].name}`);
+    const imageRef = ref(storage, `${images[i]?.name!}`);
     const result = await uploadBytes(imageRef, images[i])
     .then((e) => {
     const promise = getDownloadURL(ref(storage, `${e.metadata.fullPath}`))
@@ -63,14 +56,20 @@ export default function Home(){
       downloadUrl.push(url)
     });
       promises.push(promise);
-      countRef.current++;
       console.log("success", e.metadata.fullPath);
+      console.log('url', downloadUrl);
+    
     })
     .catch((error) => {
-    console.log("error");
+      console.log(error);
     });
     }
     await Promise.all(promises);
+    setLoading(false)
+    setImages([])
+    } else {
+      setLoading(false)
+    }
     };
   const handleSelected = (event: any) => {
       setImages(event.target.files);
@@ -78,10 +77,10 @@ export default function Home(){
   }
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-        if (flexRef.current) {
-          flexRef.current.scrollTop = flexRef.current.scrollHeight;
-        }
-      }, 700);
+      if (flexRef.current) {
+        flexRef.current.scrollTop = flexRef.current.scrollHeight;
+      }
+    }, 700);
     
     return () => clearTimeout(timeoutId);
   }, [selectedImages]);
@@ -99,24 +98,25 @@ export default function Home(){
 
   function deleteHandler(image: any) {
     setSelectedImages(selectedImages.filter((e) => e !== image));
+    // console.log(image)
     URL.revokeObjectURL(image);
   }
-
-  const handleUpPost = async () => {
-    await uploadFiles();
-    // if(countRef.current === images.length){
-      console.log(downloadUrl)
-      dispatch(newPost(newpost))
-    // }
+  
+  const closeModal = async () => {
     setDownloadUrl([])
-    // onClose()
+    setSelectedImages([])
+    onClose()
+    console.log(images)
   }
-  useEffect(() => {
-    console.log('data: ',newpost);
-  },[newpost])
-  useEffect(() => {
-    console.log('count: ',countRef.current);
-  },[countRef.current])
+  const handleUpPost = async () => {
+    let now = dayjs()
+    let output = now.format('YYYY-MM-DD HH:mm:ss')
+    setLoading(true)
+    setNewPost({...newpost, createdAt: output})
+    await uploadFiles();
+    dispatch(newPost(newpost))
+    closeModal()
+  }
   return (
       <Box>
           <Navbar />
@@ -200,7 +200,7 @@ export default function Home(){
                         </ModalBody>
                         <ModalFooter>
                           <Button colorScheme='blue' onClick={handleUpPost} w='100%'>
-                            Create
+                            {loading ? <Spinner /> : 'Post'}
                           </Button>
                         </ModalFooter>
                       </ModalContent>

@@ -2,7 +2,6 @@ import { RootState } from "../app/store";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from 'axios'
 import { IComment, SingleComment } from "./common";
-import { create } from "domain";
 interface CommentState{
     comments: IComment[] | null;
     commentLoading: boolean
@@ -17,16 +16,16 @@ export const getAllComments = createAsyncThunk("comment/getComments", async () =
 })
 export const newComment = createAsyncThunk(
     "comment/new", 
-    async ({descrip, postId, userId, createdAt}:SingleComment, { dispatch }) => {
+    async ({descrip, postId, userId, createdAt, isLiked}:SingleComment, { dispatch }) => {
     try {
         const response = await axios.post(`http://localhost:5000/api/v1/comments`,{
             descrip,
             postId,
             userId,
-            createdAt
+            createdAt,
+            isLiked
         })
         dispatch(getAllComments())
-        console.log('reponse new comment:',response.status)
     } catch (error) {
         console.log(error)
     }

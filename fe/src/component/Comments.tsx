@@ -2,7 +2,7 @@ import React,{useEffect, useState, useRef} from 'react';
 import { Box, Flex, Avatar, Button, Input, Text } from '@chakra-ui/react';
 import { Icon } from "@chakra-ui/icons"
 import { useSelector, useDispatch } from 'react-redux';
-import {BiSend} from 'react-icons/bi';
+import {BiDislike, BiSend} from 'react-icons/bi';
 import { AwesomeButton } from 'react-awesome-button';
 import { postSelector } from '../type/PostSlice';
 import { IComment,SingleComment } from '../type/common';
@@ -11,23 +11,26 @@ import dayjs from 'dayjs';
 import { setUseProxies } from 'immer';
 import { AppDispatch } from '../app/store';
 import { commentSelector, newComment } from '../type/CommentSlice';
+import { dateNow } from '../type/common';
+import { AiOutlineLike } from 'react-icons/ai';
+import '../css/comment.css'
 interface CommentProp{
     userId: number;
     postId: number;
+    createdAt: string
 }
-export default function Comments({ userId, postId}: CommentProp){
+export default function Comments({ userId, postId, createdAt}: CommentProp){
     const dispatch = useDispatch<AppDispatch>()
-    const now = dayjs()
-    const timeCreate = now.format('YYYY-MM-DD HH:mm:ss')
+    const date = dayjs(createdAt).fromNow();
+    const output = date.slice(0, -4);
     const [avaComment, setAva] = useState<string | null>('')
     const [username, setUser] = useState<string>('')
     const [descrip, setDescrip] = useState<string>('')
-    const createdAt = timeCreate
     const [comment, setComment] = useState<SingleComment>({
         descrip: '',
         userId: userId,
         postId: postId,
-        createdAt: timeCreate,
+        createdAt: dateNow,
         isLiked: '0'
     })
     const {comments} = useSelector(commentSelector)
@@ -80,11 +83,20 @@ export default function Comments({ userId, postId}: CommentProp){
                 
             </Flex>
             {postComments?.map((comment) => (
-                <Flex key={comment.id} textAlign='left' alignItems='center' mb={4} >
+                <Flex key={comment.id} textAlign='left' alignItems='center' mb={2} >
                     <Avatar name={username} size="sm" mr={2}></Avatar>
-                    <Flex display='inline-block' maxW='428px' position='relative' px={2} py={1} bgColor="#f3f3f3" borderRadius='10px' borderWidth='1px' borderColor='gray.100' flexDirection='column'>
-                        <Text fontSize="13px" fontWeight='bold'>{username}</Text>
-                        <Box >{comment.descrip}</Box>
+                    <Flex flexDirection='column'>
+                        <Flex display='inline-block' maxW='428px' position='relative' px={2} py={1} bgColor="#f3f3f3" borderRadius='10px' borderWidth='1px' borderColor='gray.100' flexDirection='column'>
+                            <Text fontSize="13px" fontWeight='bold'>{username}</Text>
+                            <Box >{comment.descrip}</Box>
+                        </Flex>
+                        <Flex color='gray.600' className='tool-comment' pl={2}>
+                            <Box className='item'><Icon as={AiOutlineLike} cursor='pointer' fontSize={18}/></Box>
+                            {/* {comment.isLiked ? '' : ''} */}
+                            <Box className='item'><Icon as={BiDislike} cursor='pointer' fontSize={18}/></Box>
+                            <Box className='item reply'><Text fontSize="13px" fontWeight='semibold' _hover={{textDecoration: 'underline', cursor: 'pointer'}}>Reply</Text></Box>
+                            <Box className='item'><Text fontSize="13px" color='gray.500'>{output}</Text></Box>
+                        </Flex>
                     </Flex>
                 </Flex>
             ))}
