@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, Flex, Avatar, Text, Button } from '@chakra-ui/react'
+import { Box, Flex, Avatar, Text, Button,Image } from '@chakra-ui/react'
 import { Icon } from "@chakra-ui/icons"
 import dayjs from 'dayjs';
 import axios from 'axios'
@@ -119,6 +119,8 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
 
     useEffect(() => {
         validate();
+        console.log(img);
+        
     },[])
 
     return (
@@ -131,7 +133,11 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                 </Box>
             </Flex>
             <Box className='description' textAlign='left' py={4}>{descrip}</Box>
-            <Flex className='common-tool' flexDirection='column'>
+            {img.map((image, index) => (
+                <Image key={index} src={image} />
+            ))}
+
+            <Flex className='common-tool' flexDirection='column' mt={2}>
                 <Flex className='react-stat' flexDirection='row' alignItems='center' textAlign='left' mb={2} px={2}>
                     {likes?.length! > 0 ? 
                         <Flex className='likes-stat' flexDirection='row' alignItems='center' textAlign='left'>

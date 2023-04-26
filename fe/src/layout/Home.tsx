@@ -31,6 +31,7 @@ interface IPost{
 export default function Home(){
   const { isOpen, onOpen, onClose } = useDisclosure()
   const dispatch = useDispatch<AppDispatch>()
+  const countRef = useRef(1)
   const { posts, postLoading } = useSelector(postSelector)
   const userInformation = JSON.parse(localStorage.getItem('userInformation') || '{}');
   useEffect(() => {
@@ -52,25 +53,29 @@ export default function Home(){
   // ----------SHOW PREVIEW SELECTED IMAGES----------
 
   const uploadFiles = async () => {
+    const promises: Promise<any>[] = []
     for (let i = 0; i < images.length; i++) {
-    const imageRef = ref(storage, `/image/${images[i].name}`);
-
+    const imageRef = ref(storage, `${images[i].name}`);
     const result = await uploadBytes(imageRef, images[i])
-    .then((e) => { 
-        getDownloadURL(ref(storage, `${e.metadata.fullPath}`))
-        .then((url) => {
-            downloadUrl.push(url)
-        })
-        console.log("success", e.metadata.fullPath); 
+    .then((e) => {
+    const promise = getDownloadURL(ref(storage, `${e.metadata.fullPath}`))
+    .then((url) => {
+      downloadUrl.push(url)
+    });
+      promises.push(promise);
+      countRef.current++;
+      console.log("success", e.metadata.fullPath);
     })
-    .catch((error) => { console.log("error"); });
+    .catch((error) => {
+    console.log("error");
+    });
     }
-  };
+    await Promise.all(promises);
+    };
   const handleSelected = (event: any) => {
       setImages(event.target.files);
       onSelectFile(event)
   }
-  console.log(images);
   useEffect(() => {
     const timeoutId = setTimeout(() => {
         if (flexRef.current) {
@@ -80,10 +85,10 @@ export default function Home(){
     
     return () => clearTimeout(timeoutId);
   }, [selectedImages]);
+
   const onSelectFile = (event: any) => {
     const selectedFiles = event.target.files;
     const selectedFilesArray = Array.from(selectedFiles);
-
     const imagesArray = selectedFilesArray.map((file: any) => {
         return URL.createObjectURL(file);
     });
@@ -91,23 +96,27 @@ export default function Home(){
     // FOR BUG IN CHROME
     // event.target.value = "";
   };
+
   function deleteHandler(image: any) {
     setSelectedImages(selectedImages.filter((e) => e !== image));
     URL.revokeObjectURL(image);
   }
+
   const handleUpPost = async () => {
     await uploadFiles();
-    if(downloadUrl.length !== 0){
+    // if(countRef.current === images.length){
       console.log(downloadUrl)
       dispatch(newPost(newpost))
-    }
+    // }
     setDownloadUrl([])
     // onClose()
   }
   useEffect(() => {
     console.log('data: ',newpost);
-    
   },[newpost])
+  useEffect(() => {
+    console.log('count: ',countRef.current);
+  },[countRef.current])
   return (
       <Box>
           <Navbar />
