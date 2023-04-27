@@ -15,7 +15,7 @@ export const getAllChildrenCmt = createAsyncThunk("comment/getComments", async (
     return response.data
 })
 export const newChildrenCmt = createAsyncThunk(
-    "comment/new", 
+    "commentChildren/new", 
     async ({descrip, postId, userId, createdAt}:SingleChildrenCmt, { dispatch }) => {
     try {
         const response = await axios.post(`http://localhost:5000/api/v1/childrenCmt`,{
@@ -34,7 +34,7 @@ const initialState: CommentState = {
     childrenLoading: false
 };
 export const ChildrenCmtSlice = createSlice({
-    name: "comment",
+    name: "commentChildren",
     initialState,
     reducers: {
     },

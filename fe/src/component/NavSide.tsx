@@ -34,7 +34,7 @@ export default function NavSide(){
                 </Flex>
             </Link>
 
-            <Link to="/">
+            <Link to="/profileId/1">
                 <Flex
                     padding={3}
                     alignItems="center"

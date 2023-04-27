@@ -17,7 +17,6 @@ export default function Navbar() {
   const navigate = useNavigate();
   const accessToken = localStorage.getItem('accessToken')
   const user = JSON.parse(localStorage.getItem('userInformation') || '{}');
-  
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('userInformation');
@@ -35,7 +34,7 @@ export default function Navbar() {
       position='relative'
     >
       <Box fontSize='25px' fontWeight="bold" width='25%' color='white' display='flex' justifyContent='flex-start'>
-        <Text>Invisocial</Text>
+        <Text onClick={() => navigate('/')} cursor='pointer'>Invisocial</Text>
       </Box>
       <Box width='50%' bgColor='white' position='relative' borderRadius="50px" h="40px" px={1}>
         <Text>search box</Text>
@@ -53,13 +52,21 @@ export default function Navbar() {
             />
             <MenuList style={{padding: '10px', width:'300px'}} >
               <MenuItem mb={2} display='flex' flexDirection='column' _hover={{ bgColor: 'transparent'}} borderRadius='10px' sx={{boxShadow: 'rgba(163, 163, 163, 0.5) 0px 0px 4px 0px;'}} bgColor='white'>
-                <Flex w="100%" flexDirection='row' onClick={(e) => console.log('click')} alignItems='center' borderRadius='10px' _hover={{bgColor:'gray.100'}} pt={2} px={1} pb={3}>
+                <Flex w="100%" flexDirection='row' onClick={() => navigate(`/profileId/${user[0].id}`)} alignItems='center' borderRadius='10px' _hover={{bgColor:'gray.100'}} pt={2} px={1} pb={3}
+                  
+                >
                   <Avatar name={user[0].name} src={user.avatar} marginRight=".5rem" size='sm'/>
-                  <Text fontWeight='bold' fontSize='17px'>{user[0].name}</Text>
+                  <Text fontWeight='bold' fontSize='17px'
+                    
+                  >{user[0].name}</Text>
                 </Flex>
                 <Box w="100%" h="1.5px" bgColor="gray.200" my={1}></Box>
-                <Flex w="100%" _hover={{bgColor:'gray.100'}} p={2} justifyContent='center' alignItems='center' borderRadius='10px'>
-                  <Text align='center' color='rgba(22, 0, 163, 0.7)' fontWeight='bold'>
+                <Flex
+                  
+                  onClick={() => navigate(`/profileId/${user[0].id}`)}
+                w="100%" _hover={{bgColor:'gray.100'}} p={2} justifyContent='center' alignItems='center' borderRadius='10px'>
+                  <Text align='center' color='rgba(22, 0, 163, 0.7)' fontWeight='bold'
+                  >
                     See Profile
                   </Text>
                 </Flex>

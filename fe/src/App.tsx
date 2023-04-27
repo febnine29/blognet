@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import { Counter } from './features/counter/Counter';
 import {
@@ -11,7 +11,7 @@ import {
 import Login from './layout/Login';
 import Register from './layout/Register';
 import Home from './layout/Home';
-import Navbar from './component/Navbar';
+import Profile from './layout/Profile';
 import Post from './component/Post';
 import './App.css';
 
@@ -38,11 +38,18 @@ function App() {
             }
           />
           <Route 
-            path="/post" 
+            path="/profileId/:userIdParams" 
             element={
-              <Post />
+              <Profile />
             }
           />
+          {/* {userList && userList.map(userId => ( */}
+            
+            <Route 
+              path="/test" 
+              element={<Post />}
+            />
+          {/* ))} */}
         </Routes>
       </div>
   );

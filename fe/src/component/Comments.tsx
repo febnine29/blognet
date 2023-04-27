@@ -14,15 +14,16 @@ import { commentSelector, newComment } from '../type/CommentSlice';
 import { dateNow } from '../type/common';
 import { AiOutlineLike } from 'react-icons/ai';
 import '../css/comment.css'
+import { log } from 'console';
 interface CommentProp{
     userId: number;
     postId: number;
-    createdAt: string
+    createdAt: string;
+    comments: IComment[] | undefined
 }
-export default function Comments({ userId, postId, createdAt}: CommentProp){
+export default function Comments({ userId, postId, createdAt,comments}: CommentProp){
     const dispatch = useDispatch<AppDispatch>()
-    const date = dayjs(createdAt).fromNow();
-    const output = date.slice(0, -4);
+    // const output = date.slice(0, -4);
     const [avaComment, setAva] = useState<string | null>('')
     const [username, setUser] = useState<string>('')
     const [descrip, setDescrip] = useState<string>('')
@@ -30,11 +31,11 @@ export default function Comments({ userId, postId, createdAt}: CommentProp){
         descrip: '',
         userId: userId,
         postId: postId,
-        createdAt: dateNow,
+        createdAt: '',
         isLiked: '0'
     })
-    const {comments} = useSelector(commentSelector)
-    const postComments = comments?.filter((comment) => comment.postId === postId)
+    // const {comments} = useSelector(commentSelector)
+    // const postComments = comments?.filter((comment) => comment.postId === postId)
     const [disable, setDisable] = useState<boolean>(false)
     const validate = () => {
         if(comment.descrip.length === 0){
@@ -47,23 +48,34 @@ export default function Comments({ userId, postId, createdAt}: CommentProp){
         setComment({...comment, descrip: ''})
     }
     // fetch avatar for each comment
-    useEffect(() => {
-        const fetchAvaComment = async() => {
+    // useEffect(() => {
+        const fetchAvaComment = async(id:number) => {
             try {
-                await axios.get(`http://localhost:5000/api/v1/auth/getUserId=${comment.userId}`)
+                await axios.get(`http://localhost:5000/api/v1/auth/getUserId=${id}`)
                 .then(response => {
                     setAva(response.data.infor[0].coverPic)
                     setUser(response.data.infor[0].name)
+                    console.log(response.data.infor);
                     
                 })
             } catch(error) {
                 console.log(error)
             }
         }
-        fetchAvaComment();
-    },[comment])
+        // const result = postComments?.map((comment) => fetchAvaComment(comment.id))
+        // console.log(result);
+        
+    //     ;
+    // },[comment])
+    
+    // const userInfo = comments?.map((user) => fetchAvaComment(user.id))
+    
     useEffect(() => {
+        let now = dayjs()
+        let dateCmt = now.format('YYYY-MM-DD HH:mm:ss')
+        setComment({...comment, createdAt: dateCmt})
         validate()
+        console.log(comment)
     },[comment.descrip])
     return (
         <Flex className="comment-box" flexDirection='column' w="100%" borderTopWidth="1px" borderTopColor='gray.200' py={2}>
@@ -82,22 +94,22 @@ export default function Comments({ userId, postId, createdAt}: CommentProp){
                     </form>
                 
             </Flex>
-            {postComments?.map((comment) => (
-                <Flex key={comment.id} textAlign='left' alignItems='center' mb={2} >
+            {comments?.map((comment) => (
+                <Flex key={comment.id} position='relative' textAlign='left' alignItems='center' mb={7} >
                     <Avatar name={username} size="sm" mr={2}></Avatar>
-                    <Flex flexDirection='column'>
-                        <Flex display='inline-block' maxW='428px' position='relative' px={2} py={1} bgColor="#f3f3f3" borderRadius='10px' borderWidth='1px' borderColor='gray.100' flexDirection='column'>
+                    {/* <Flex flexDirection='column'> */}
+                        <Flex display='' maxW='428px' position='relative' px={2} py={1} bgColor="#f3f3f3" borderRadius='10px' borderWidth='1px' borderColor='gray.100' flexDirection='column'>
                             <Text fontSize="13px" fontWeight='bold'>{username}</Text>
                             <Box >{comment.descrip}</Box>
                         </Flex>
-                        <Flex color='gray.600' className='tool-comment' pl={2}>
+                        <Flex position='absolute' left='40px' bottom='-25px'color='gray.600' className='tool-comment' pl={2}>
                             <Box className='item'><Icon as={AiOutlineLike} cursor='pointer' fontSize={18}/></Box>
                             {/* {comment.isLiked ? '' : ''} */}
                             <Box className='item'><Icon as={BiDislike} cursor='pointer' fontSize={18}/></Box>
-                            <Box className='item reply'><Text fontSize="13px" fontWeight='semibold' _hover={{textDecoration: 'underline', cursor: 'pointer'}}>Reply</Text></Box>
-                            <Box className='item'><Text fontSize="13px" color='gray.500'>{output}</Text></Box>
+                            <Box className='item reply'><Text fontSize="12px" fontWeight='semibold' _hover={{textDecoration: 'underline', cursor: 'pointer'}}>Reply</Text></Box>
+                            <Box className='item'><Text fontSize="12px" color='gray.500'>{dayjs(comment.createdAt).fromNow().slice(0, -4)}</Text></Box>
                         </Flex>
-                    </Flex>
+                    {/* </Flex> */}
                 </Flex>
             ))}
         </Flex>

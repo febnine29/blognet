@@ -89,7 +89,20 @@ export const getLike = async (body: {pId: number}) => {
         return error
     }
 }
-
+export const getUserById = async (id: number) => {
+    try{
+        axios.get(`http://localhost:5000/api/v1/auth/getUserId=${id}`)
+        .then(response => {
+            console.log(response.data.infor)
+            return response.data.infor
+        })
+        .catch(error => {
+            return error
+        })
+    } catch (error) {
+        return error
+    }
+}
 export const getComments = async (body: {id: number}) => {
     try{
         axios.get(`http://localhost:5000/api/v1/likes/getLikes=${body.id}`)

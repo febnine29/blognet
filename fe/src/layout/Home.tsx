@@ -19,7 +19,6 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { storage } from '../firebase';
 import { dateNow } from '../type/common';
 import dayjs from 'dayjs'
-import { log } from 'console';
 
 export default function Home(){
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -109,14 +108,16 @@ export default function Home(){
     console.log(images)
   }
   const handleUpPost = async () => {
-    let now = dayjs()
-    let output = now.format('YYYY-MM-DD HH:mm:ss')
     setLoading(true)
-    setNewPost({...newpost, createdAt: output})
     await uploadFiles();
     dispatch(newPost(newpost))
     closeModal()
   }
+  useEffect(() => {
+    let now = dayjs()
+    let output = now.format('YYYY-MM-DD HH:mm:ss')
+    setNewPost({...newpost, createdAt: output})
+  },[newpost.descrip])
   return (
       <Box>
           <Navbar />

@@ -1,23 +1,25 @@
-import React, { useEffect } from 'react';
-import { Box, Flex,Menu, MenuButton, MenuList, MenuItem, Avatar, Text, Button,Image } from '@chakra-ui/react'
+import React, { useEffect,useState } from 'react';
+import { Box, Flex,Menu, MenuButton, MenuList, MenuItem, Avatar, Text, Button,Image, Input } from '@chakra-ui/react'
 import { Icon } from "@chakra-ui/icons"
 import dayjs from 'dayjs';
 import axios from 'axios'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { BsHeart, BsHeartFill, BsThreeDots } from 'react-icons/bs';
 import { FaHeart, FaRegHeart, FaRegComment, FaRegShareSquare,FaRegTrashAlt } from 'react-icons/fa'
-import { IComment, ILike, like, unLike, updateLiked } from '../type/common';
-import  Comments  from './Comments'
+import { IComment, ILike, like, unLike, updateLiked,SingleComment } from '../type/common';
 import { useDispatch, useSelector } from 'react-redux';
 import { deletePost, getAllPosts } from '../type/PostSlice';
 import { AppDispatch } from '../app/store';
+import { newComment } from '../type/CommentSlice';
 import { commentSelector, getAllComments} from '../type/CommentSlice';
+import { BiSend } from 'react-icons/bi';
+import { useNavigate } from 'react-router';
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation } from "swiper";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import SingleCommentCp from './SingleCommentCp';
 interface SinglePostProp{
     postId: number;
     userId: number;
@@ -29,6 +31,7 @@ interface SinglePostProp{
 dayjs.extend(relativeTime)
 export default function SinglePost({postId, descrip, userId, img, createdAt, isLiked}: SinglePostProp){
     const dispatch = useDispatch<AppDispatch>()
+    const navigate = useNavigate()
     const date = dayjs(createdAt).fromNow();
     const dateFormat = dayjs(createdAt).format('DD/MM lúc HH:mm')
     const [output, setOutput] = React.useState('')
@@ -124,7 +127,30 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
         
         fetchUser();
     }, [userId]);
-
+    const [comment, setComment] = useState<SingleComment>({
+        descrip: '',
+        userId: userId,
+        postId: postId,
+        createdAt: '',
+        isLiked: '0'
+    })
+    const validateCmt = () => {
+        if(comment.descrip.length === 0){
+            return false
+        } else return true
+    }
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        dispatch(newComment(comment))
+        setComment({...comment, descrip: ''})
+    }
+    useEffect(() => {
+        let now = dayjs()
+        let dateCmt = now.format('YYYY-MM-DD HH:mm:ss')
+        setComment({...comment, createdAt: dateCmt})
+        validateCmt()
+        console.log(comment)
+    },[comment.descrip])
     useEffect(() => {
         validate();
         console.log(img);
@@ -136,7 +162,12 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
             <Flex className='post-info' alignItems='center' w="100%">
                 <Avatar name={username} size='md'/>
                 <Box ml={2}>
-                    <Text fontWeight='bold' textAlign='left' fontSize='17px'>{username}</Text>
+                    <Text fontWeight='bold' textAlign='left' fontSize='17px'
+                        onClick={() => navigate(`/profileId/${userId}`)}
+                        _hover={{cursor: 'pointer', textDecoration: 'underline'}}
+                    >
+                        {username}
+                    </Text>
                     <Text fontSize='12px' color='gray' textAlign='left'>{output}</Text>
                 </Box>
                 {userId === userInformation[0].id ? 
@@ -157,7 +188,7 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                 
             </Flex>
             <Box className='description' textAlign='left' py={4}>{descrip}</Box>
-            {img.length < 1 ? 
+            {img?.length! < 1 ? 
                 <Image src={img[0]} mb={2}/>
             : 
                 <Swiper
@@ -168,7 +199,7 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                 modules={[Pagination, Navigation]}
                 className="mySwiper"
               >
-                {img.map((image, index) => (
+                {img?.map((image, index) => (
                     <SwiperSlide key={index}>
                         <Image src={image} mb={2}/>
                     </SwiperSlide>
@@ -229,9 +260,38 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                         Share
                     </Button>
                 </Flex>
-                {showComment && (
-                    <Comments userId={userInformation[0].id} postId={postId} createdAt={createdAt}/>
-                )}
+                {showComment && 
+                
+                    <Flex className="comment-box" flexDirection='column' w="100%" borderTopWidth="1px" borderTopColor='gray.200' py={2}>
+                        <Flex textAlign='left' alignItems='center' mb={2}>
+                            <Avatar name={username} size="sm" mr={2}></Avatar>
+                                <form onSubmit={handleSubmit} style={{width: '100%', display: 'flex', flexDirection: 'row'}}>
+                                <Input
+                                    placeholder='Write a comment...'
+                                    value={comment.descrip}
+                                    onChange={(e) => setComment({...comment, descrip: e.target.value})}
+                                >
+                                </Input>
+                                <Button type='submit' variant='ghost'>
+                                    <Icon as={BiSend} fontSize='20px'/>
+                                </Button>
+                                </form>
+                            
+                        </Flex>
+                        
+                    </Flex>}
+                    {showComment && cmtArray?.map((comment) => (
+                        <SingleCommentCp
+                            key={comment.id}
+                            id={comment.id}
+                            descrip={comment.descrip}
+                            userId={comment.userId}
+                            postId={comment.postId}
+                            createdAt={comment.createdAt}
+                            isLiked={comment.isLiked}
+                        />
+                    // <Comments userId={userInformation[0].id} comments={cmtArray} postId={postId} createdAt={createdAt}/>
+                ))}
             </Flex>
         </Box>
     )
