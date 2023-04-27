@@ -46,6 +46,18 @@ const authController = {
             res.status(400).json({ error: error.message })
         }
     },
+    getAllUsersId: async (req, res) => {
+        try {
+            const { id } = req.params
+            const [rows, fields] = await pool.query("select id from users")
+            
+            res.json({
+                result: rows
+            })
+        } catch (error) {
+            res.status(400).json({ error: error.message })
+        }
+    },
     getUserById: async (req, res) => {
         try {
             const { id } = req.params

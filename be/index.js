@@ -2,7 +2,6 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 require('dotenv').config()
-
 const postsRouter = require('./routes/posts.router')
 const authRouter = require('./routes/auth.router')
 const commentsRouter = require('./routes/comments.router')
@@ -20,5 +19,5 @@ app.use('/api/v1/childrenCmt', childrenRouter)
 const PORT = process.env.PORT || 5000
 
 app.listen(PORT, () => {
-    console.log("-----SERVER IS RUNNING...")
+    console.log(`-----SERVER IS RUNNING ON PORT: ${PORT}...`)
 })
