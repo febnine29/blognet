@@ -21,13 +21,13 @@ io.on("connection", (socket) => {
         io.emit('get-users', activeUsers)
         })
     socket.on("send-message", (data) => {
-        const {fromId} = data;
+        const fromId = data.fromId;
         const user = activeUsers.find((user) => user.userId === fromId)
-        console.log("user", user);
-        console.log("Data", data);
         if(user){
-            console.log('debug');
-            io.to(user.socketId).emit("receive-message", data)
+            io.emit("receive-message", data)
+            console.log("user", user);
+            console.log(data);
+            console.log(user.socketId);
         }
     })
     socket.on("disconnect", () => {

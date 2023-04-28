@@ -69,7 +69,7 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
     const setLike = async () => {
         try {
             await axios.post(`http://localhost:5000/api/v1/likes/like`,{
-                userId: userInformation[0].id,
+                userId: userInformation[0].id!,
                 postId: postId
             })
         } catch (error){
@@ -79,7 +79,7 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
     const unLike = async () => {
         try{
             await axios.post(`http://localhost:5000/api/v1/likes/unLike`,{
-                userId: userInformation[0].id,
+                userId: userInformation[0].id!,
                 postId: postId
             })
             .then(response => {
@@ -168,9 +168,9 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                     >
                         {username}
                     </Text>
-                    <Text fontSize='12px' color='gray' textAlign='left'>{output}</Text>
+                    <Text fontSize='12px' color='gray' textAlign='left'>{output!}</Text>
                 </Box>
-                {userId === userInformation[0].id ? 
+                {userId === userInformation[0]?.id! ? 
                     <Box ml='auto'>
                     <Menu>
                         <MenuButton as={Button} rightIcon={<BsThreeDots />} variant='ghost' _hover={{bgColor: 'transparent'}} _active={{bgColor: 'transparent'}}/>

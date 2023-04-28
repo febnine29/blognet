@@ -144,8 +144,11 @@ export default function Profile(){
   const handleUpPost = async () => {
     let now = dayjs()
     let output = now.format('YYYY-MM-DD HH:mm:ss')
+    await new Promise<void>((resolve) => {
+      setNewPost({ ...newpost, createdAt: output })
+      resolve();
+    });
     setLoading(true)
-    setNewPost({...newpost, createdAt: output})
     await uploadFiles();
     dispatch(newPost(newpost))
     closeModal()

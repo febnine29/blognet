@@ -36,7 +36,7 @@ export default function Home(){
   const flexRef = useRef<HTMLDivElement>(null);
   const [newpost, setNewPost] = useState<ISinglePost>({
     descrip: "",
-    userId: userInformation[0].id,
+    userId: userInformation[0]?.id!,
     img: downloadUrl,
     createdAt: dateNow,
     isLiked: "0"
@@ -108,23 +108,28 @@ export default function Home(){
     console.log(images)
   }
   const handleUpPost = async () => {
+    let now = dayjs()
+    let output = now.format('YYYY-MM-DD HH:mm:ss')
+    await new Promise<void>((resolve) => {
+      setNewPost({ ...newpost, createdAt: output })
+      resolve();
+    });
     setLoading(true)
     await uploadFiles();
     dispatch(newPost(newpost))
     closeModal()
   }
-  useEffect(() => {
-    let now = dayjs()
-    let output = now.format('YYYY-MM-DD HH:mm:ss')
-    setNewPost({...newpost, createdAt: output})
-  },[newpost.descrip])
+  // console.log(userInformation.id);
+  
   return (
       <Box>
           <Navbar />
           <Box className='main-body' w='100vw' h='100%' p={4} display='flex' flexDirection='row' bgColor="#fbfbfb">
               <NavSide />
+             
               <Flex className='blog-side' w='50%' justifyItems='center' alignItems="center" flexDirection='column'> 
-                  <Flex flexDirection='column' className='create-status shadow-box' px={3} py={3} mb={4} bgColor='white' borderRadius='10px' maxW='590px' minW="500px">
+                   {/* {userInformation.id ?  */}
+                   <Flex flexDirection='column' className='create-status shadow-box' px={3} py={3} mb={4} bgColor='white' borderRadius='10px' maxW='590px' minW="500px">
                     <Flex alignItems='center' w='100%'>
                       <Avatar name={userInformation[0]?.name!} w='40px' h='40px' mr={2}/>
                       <Button w="100%" onClick={onOpen} fontWeight='medium' textAlign='left' color="gray.400" borderRadius='50px'>
@@ -206,7 +211,8 @@ export default function Home(){
                         </ModalFooter>
                       </ModalContent>
                     </Modal>
-                  </Flex>
+                    </Flex>
+                  
                   {postLoading && <Spinner sx={{position:'absolute', left: '50%', top: '30%'}}/>}
                   {posts?.map((post) => (
                     <SinglePost 
@@ -219,7 +225,7 @@ export default function Home(){
                       isLiked={post.isLiked}
                     />
                   ))}
-              </Flex>
+              </Flex> 
               <RecentSide />
           </Box>
       </Box>

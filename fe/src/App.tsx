@@ -12,8 +12,9 @@ import Login from './layout/Login';
 import Register from './layout/Register';
 import Home from './layout/Home';
 import Profile from './layout/Profile';
-import Post from './component/Post';
+import Test from './component/Test';
 import './App.css';
+import Chat from './layout/Chat';
 
 function App() {
   return (
@@ -43,11 +44,17 @@ function App() {
               <Profile />
             }
           />
+          <Route 
+            path="/chatId/:fromid"
+            element={
+              <Chat />
+            }
+          />
           {/* {userList && userList.map(userId => ( */}
             
             <Route 
               path="/test" 
-              element={<Post />}
+              element={<Test />}
             />
           {/* ))} */}
         </Routes>

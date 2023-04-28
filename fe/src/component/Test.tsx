@@ -10,21 +10,27 @@ interface IMessage{
     fromId: number;
     toId: number;
     createdAt: string;
-    chatId: string;
+    chatId: number;
 }
-function Post() {
+function Test() {
     const user = JSON.parse(localStorage.getItem('userInformation') || '{}');
     const [socket, setSocket] = useState<Socket | null>(null);
     const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
+    const [test, setText] = useState<IMessage>({
+        descrip: '',
+        fromId: user[0].id,
+        toId: 0,
+        createdAt: '2023-04-28 09:00:00',
+        chatId: 11
+    })
     const userid = user[0].id
+    // const socket = io('http://localhost:8800')
     useEffect(() => {
         if (!socket) {
             const newSocket = io('http://localhost:8800');
             setSocket(newSocket);
             newSocket.emit("new-user-add", userid);
-            // newSocket.on('get-users', (users) => {
-            //     setOnlineUsers(users);
-            // }); 
+            // socket.emit("new-user-add", userid);
         }
         socket?.on('get-users', (users) => {
             setOnlineUsers(users);
@@ -40,14 +46,17 @@ function Post() {
             createdAt: '123',
             chatId: '10'
         }
+        // const message = 'test message'
         socket?.emit('send-message', message)
 
     }
     const [receiveMessage, setReceiveMessage] = useState<IMessage | null>(null)
+    // const [receiveMessage, setReceiveMessage] = useState('')
     useEffect(() => {
         socket?.on("receive-message", (data) => {
             setReceiveMessage(data)
             console.log(data);
+            console.log('running');
             
         })
     },[socket, receiveMessage])
@@ -55,6 +64,9 @@ function Post() {
     console.log(receiveMessage);
 
     },[receiveMessage])
+    useEffect(() => {
+        console.log(onlineUsers);
+    },[onlineUsers])
     
     return (
         <Box className="Post">
@@ -65,4 +77,4 @@ function Post() {
     );
 }
 
-export default Post;
+export default Test;
