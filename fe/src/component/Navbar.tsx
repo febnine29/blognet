@@ -37,17 +37,17 @@ export default function Navbar() {
       paddingY=".5rem"
       className="navbar"
       position='relative'
+      justifyContent={user[0]?.id! === undefined ? 'space-between' : ''}
       w='100%'
     >
       <Box fontSize='25px' fontWeight="bold" width='25%' color='white' display='flex' justifyContent='flex-start'>
         <Text onClick={() => navigate('/')} cursor='pointer'>Invisocial</Text>
       </Box>
-      <Box width='50%' bgColor={location.pathname.includes('/chatId') ? 'transparent': 'white' } position='relative' borderRadius="50px" h="40px" px={1}>
+      <Flex display={user[0]?.id! === undefined ? 'none' : 'block'} width='50%'  bgColor={location.pathname.includes('/chatId') ? 'transparent': 'white' } position='relative' borderRadius="50px" h="40px" px={1}>
         {location.pathname.includes('/chatId') ? <></> : <Box>search</Box> }
-      </Box>
+      </Flex>
       {accessToken && accessToken !== 'undefined' ?
         <Box width='25%' display='flex' flexDirection='row' alignItems='center' justifyContent='flex-end'>
-            
           <IconButton aria-label='mess' icon={<FaFacebookMessenger />} w='40px' h='40px' color={Color} borderRadius='50%' mr={2}
             onClick={() => navigate(`/chatId/${user[0].id}`)}
           />

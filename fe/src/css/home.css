@@ -31,3 +31,12 @@
   .error span {
     color: red;
   }
+  .swiper-pagination{
+    border-radius: 50px;
+    width: 55px !important;
+    margin-left: 210px;
+  }
+  .swiper-button-prev,
+  .swiper-button-next{
+    color: white !important
+  }

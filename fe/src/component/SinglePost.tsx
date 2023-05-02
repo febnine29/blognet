@@ -1,5 +1,5 @@
 import React, { useEffect,useState } from 'react';
-import { Box, Flex,Menu, MenuButton, MenuList, MenuItem, Avatar, Text, Button,Image, Input } from '@chakra-ui/react'
+import { Box, Flex,Menu, Link, MenuButton, MenuList, MenuItem, Avatar, Text, Button,Image, Input } from '@chakra-ui/react'
 import { Icon } from "@chakra-ui/icons"
 import dayjs from 'dayjs';
 import axios from 'axios'
@@ -225,21 +225,23 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                     : ''}
                 </Flex>
                 <Flex className='tool-buttons' w="100%" py={2} justifyContent='space-around' borderTopWidth="1px" borderTopColor='gray.200'>
-                    <Button 
-                        bgColor='transparent'
-                        size='sm'
-                        leftIcon={
-                            <Icon as={isLiked === "1" ? FaHeart : FaRegHeart} 
-                            fontSize='18px' 
+                    {userInformation[0]?.id! === undefined ? undefined : 
+                        <Button 
+                            bgColor='transparent'
+                            size='sm'
+                            leftIcon={
+                                <Icon as={isLiked === "1" ? FaHeart : FaRegHeart} 
+                                fontSize='18px' 
+                                color={isLiked === "1" ? "#4200eb" : "#676175"}
+                                />
+                            }
                             color={isLiked === "1" ? "#4200eb" : "#676175"}
-                            />
-                        }
-                        color={isLiked === "1" ? "#4200eb" : "#676175"}
-                        fontWeight={isLiked === "1" ? "bold" : "medium"}
-                        onClick={isLiked === "1" ? handleUnLike : handleLike}
-                    >
-                        {isLiked === "1" ? 'Liked' : 'Like'}
-                    </Button>
+                            fontWeight={isLiked === "1" ? "bold" : "medium"}
+                            onClick={isLiked === "1" ? handleUnLike : handleLike}
+                        >
+                            {isLiked === "1" ? 'Liked' : 'Like'}
+                        </Button>
+                    }
                     <Button 
                         bgColor='transparent'
                         size='sm'
@@ -250,36 +252,36 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                     >
                         Comment
                     </Button>
-                    <Button 
-                        bgColor='transparent'
-                        size='sm'
-                        leftIcon={<Icon as={FaRegShareSquare} fontSize='18px' color="#676175"/>}
-                        color="#676175"
-                        fontWeight="medium"
-                    >
-                        Share
-                    </Button>
+                    {userInformation[0]?.id! === undefined ? undefined : 
+                        <Button 
+                            bgColor='transparent'
+                            size='sm'
+                            leftIcon={<Icon as={FaRegShareSquare} fontSize='18px' color="#676175"/>}
+                            color="#676175"
+                            fontWeight="medium"
+                        >
+                            Share
+                        </Button>
+                    }
                 </Flex>
-                {showComment && 
-                
                     <Flex className="comment-box" flexDirection='column' w="100%" borderTopWidth="1px" borderTopColor='gray.200' py={2}>
+                        {showComment && userInformation[0]?.id! !== undefined && (
                         <Flex textAlign='left' alignItems='center' mb={2}>
-                            <Avatar name={username} size="sm" mr={2}></Avatar>
-                                <form onSubmit={handleSubmit} style={{width: '100%', display: 'flex', flexDirection: 'row'}}>
-                                <Input
-                                    placeholder='Write a comment...'
-                                    value={comment.descrip}
-                                    onChange={(e) => setComment({...comment, descrip: e.target.value})}
-                                >
-                                </Input>
-                                <Button type='submit' variant='ghost'>
-                                    <Icon as={BiSend} fontSize='20px'/>
-                                </Button>
-                                </form>
-                            
+                        <Avatar name={username} size="sm" mr={2}></Avatar>
+                        <form onSubmit={handleSubmit} style={{width: '100%', display: 'flex', flexDirection: 'row'}}>
+                            <Input
+                            placeholder='Write a comment...'
+                            value={comment.descrip}
+                            onChange={(e) => setComment({...comment, descrip: e.target.value})}
+                            >
+                            </Input>
+                            <Button type='submit' variant='ghost'>
+                            <Icon as={BiSend} fontSize='20px'/>
+                            </Button>
+                        </form>
                         </Flex>
-                        
-                    </Flex>}
+                     )}
+                    </Flex>
                     {showComment && cmtArray?.map((comment) => (
                         <SingleCommentCp
                             key={comment.id}

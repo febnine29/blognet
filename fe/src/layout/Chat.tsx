@@ -9,6 +9,7 @@ import Navbar from "../component/Navbar";
 import axios from 'axios'
 import dayjs from 'dayjs'
 import ChatListItem from "../component/ChatListItem";
+import ChatBoxDetail from "../component/ChatBoxDetail";
 interface IMessage{
     descrip: string;
     fromId: number;
@@ -91,9 +92,7 @@ function Chat() {
                     <ChatListItem />
                 </Flex>
                 <Flex className='chat-box' w='65%' flexDirection='column'>
-                    <Flex className="show-messages">
-
-                    </Flex>
+                    <ChatBoxDetail />
                     <Flex className="input-message">
                         <form onSubmit={handleSubmit}>
                             <Input placeholder="text" onChange={(e) => setText({...text, descrip: e.target.value})}/>
