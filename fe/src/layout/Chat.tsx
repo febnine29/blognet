@@ -8,7 +8,7 @@ import { io,Socket } from "socket.io-client";
 import Navbar from "../component/Navbar";
 import axios from 'axios'
 import dayjs from 'dayjs'
-import ChatListItem from "../component/ChatListItem";
+import ChatList from "../component/ChatList";
 import ChatBoxDetail from "../component/ChatBoxDetail";
 interface IMessage{
     descrip: string;
@@ -24,6 +24,15 @@ function Chat() {
     const {fromid} = useParams()
     const user = JSON.parse(localStorage.getItem('userInformation') || '{}');
     const [chatList, setChatList] = useState<IChatList[] | null>(null)
+    const [selectedToid, setSelectedToid] = useState<number | null>(null)
+    const [socket, setSocket] = useState<Socket | null>(null);
+    const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
+    const [text, setText] = useState<IMessage>({
+        descrip: '',
+        fromId: user[0].id,
+        toId: 0,
+        createdAt: ''
+    })
     useEffect(() => {
         const fetchChatList = async () => {
             try {
@@ -33,14 +42,6 @@ function Chat() {
         }
         fetchChatList()
     },[])
-    const [socket, setSocket] = useState<Socket | null>(null);
-    const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
-    const [text, setText] = useState<IMessage>({
-        descrip: '',
-        fromId: user[0].id,
-        toId: 0,
-        createdAt: '2023-04-28 09:00:00'
-    })
     const userid = user[0].id
     useEffect(() => {
         if (!socket) {
@@ -65,7 +66,7 @@ function Chat() {
     },[socket, receiveMessage])
 
     useEffect(() => {
-        console.log(chatList);
+        // console.log(chatList);
     },[])
     const handleSubmit = async () => {
         let now = dayjs()
@@ -76,30 +77,25 @@ function Chat() {
         });
         socket?.emit('send-message', text)
     }
-
+    const handleSelectToid = (id:number) => {
+        setSelectedToid(id);
+    }
     useEffect(() => {
-        console.log(receiveMessage)
+        // console.log(receiveMessage)
     },[receiveMessage])
-    useEffect(() => {
+    // useEffect(() => {
         
-        console.log(onlineUsers);
-    },[onlineUsers])
+    //     console.log(onlineUsers);
+    // },[onlineUsers])
     return (
-        <Box className="Chat" h='100%'>
+        <Box className="chat">
             <Navbar />
-            <Flex w='100%' >
-                <Flex className="chat-list" flexDirection='column' w='35%' h="100%" bgColor="gray.300">
-                    <ChatListItem />
+            <Flex className="chat-detail" w='100%' h='min(100vh - 56px)' p={2} bgColor="#f7f7f7" justifyContent='space-between'>
+                <Flex className="chat-list" flexDirection='column' w='35%' bgColor="white" borderRadius='10px' p={4}>
+                    <ChatList fromid={user[0].id!} onSelectMessage={handleSelectToid}/>
                 </Flex>
-                <Flex className='chat-box' w='65%' flexDirection='column'>
-                    <ChatBoxDetail />
-                    <Flex className="input-message">
-                        <form onSubmit={handleSubmit}>
-                            <Input placeholder="text" onChange={(e) => setText({...text, descrip: e.target.value})}/>
-                            
-                        </form>
-                        <Button type="submit">send</Button>
-                    </Flex>
+                <Flex className='chat-box' w='64%' h='100%' flexDirection='column' bgColor="white" borderRadius='10px' p={4}>
+                    <ChatBoxDetail toid={selectedToid} fromid={user[0].id!}/>
                 </Flex>
             </Flex>
         </Box>

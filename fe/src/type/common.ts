@@ -93,8 +93,8 @@ export const getUserById = async (id: number) => {
     try{
         axios.get(`http://localhost:5000/api/v1/auth/getUserId=${id}`)
         .then(response => {
-            console.log(response.data.infor)
-            return response.data.infor
+            console.log(response.data.info)
+            return response.data.info
         })
         .catch(error => {
             return error

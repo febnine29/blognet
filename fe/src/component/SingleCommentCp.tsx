@@ -17,8 +17,7 @@ export default function SingleCommentCp({id,descrip, userId,postId, createdAt, i
         const fetchUser = async () => {
             try {
             const response = await axios.get(`http://localhost:5000/api/v1/auth/getUserId=${userId}`);
-                setName(response.data.infor[0].name)
-                console.log(response.data.infor[0].name)
+                setName(response.data.info[0].name)
             } catch (error) {
                 console.error(error);
                 }

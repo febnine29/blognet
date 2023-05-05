@@ -27,7 +27,6 @@ export default function Navbar() {
     dispatch(storeAccessToken(''));
     navigate('/login');
   };
-  console.log('location', location.pathname.includes('/chatId'));
   
   return (
     <Box
@@ -49,7 +48,7 @@ export default function Navbar() {
       {accessToken && accessToken !== 'undefined' ?
         <Box width='25%' display='flex' flexDirection='row' alignItems='center' justifyContent='flex-end'>
           <IconButton aria-label='mess' icon={<FaFacebookMessenger />} w='40px' h='40px' color={Color} borderRadius='50%' mr={2}
-            onClick={() => navigate(`/chatId/${user[0].id}`)}
+            onClick={() => navigate(`/chat`)}
           />
           <Menu>
             <MenuButton

@@ -64,7 +64,7 @@ const authController = {
             const [rows, fields] = await pool.query("select * from users where id = ?", [id])
             
             res.json({
-                infor: rows
+                info: rows
             })
         } catch (error) {
             res.status(400).json({ error: error.message })

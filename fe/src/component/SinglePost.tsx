@@ -119,7 +119,9 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
         const fetchUser = async () => {
         try {
         const response = await axios.get(`http://localhost:5000/api/v1/auth/getUserId=${userId}`);
-            setUsername(response.data.infor[0].name);
+            setUsername(response.data.info[0].name);
+            console.log(username);
+            
         } catch (error) {
             console.error(error);
             }
@@ -134,27 +136,25 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
         createdAt: '',
         isLiked: '0'
     })
-    const validateCmt = () => {
-        if(comment.descrip.length === 0){
-            return false
-        } else return true
+    function validateCmt(): boolean {
+        return comment.descrip.length === 0
     }
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+        let now = dayjs()
+        let output = now.format('YYYY-MM-DD HH:mm:ss')
+        await new Promise<void>((resolve) => {
+            setComment({...comment, createdAt: output})
+            resolve();
+        });
         dispatch(newComment(comment))
         setComment({...comment, descrip: ''})
     }
     useEffect(() => {
-        let now = dayjs()
-        let dateCmt = now.format('YYYY-MM-DD HH:mm:ss')
-        setComment({...comment, createdAt: dateCmt})
         validateCmt()
-        console.log(comment)
     },[comment.descrip])
     useEffect(() => {
         validate();
-        console.log(img);
-        
     },[])
 
     return (
@@ -275,8 +275,8 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                             onChange={(e) => setComment({...comment, descrip: e.target.value})}
                             >
                             </Input>
-                            <Button type='submit' variant='ghost'>
-                            <Icon as={BiSend} fontSize='20px'/>
+                            <Button type='submit' variant='ghost' isDisabled={validateCmt()}>
+                                <Icon as={BiSend} fontSize='20px'/>
                             </Button>
                         </form>
                         </Flex>

@@ -48,8 +48,8 @@ export default function Profile(){
     const fetchUser = async () => {
         try {
         const response = await axios.get(`http://localhost:5000/api/v1/auth/getUserId=${userIdParams}`);
-            setName(response.data.infor[0].name)
-            console.log(response.data.infor[0].name)
+            setName(response.data.info[0].name)
+            console.log(response.data.info[0].name)
         } catch (error) {
             console.error(error);
             }
@@ -172,6 +172,9 @@ export default function Profile(){
                         <Text>Number of followers</Text>
                         <Text>followers list avatars</Text>
                     </Flex>
+                </Flex>
+                <Flex className='buttons-in-profile'>
+
                 </Flex>
             </Flex>
             <Flex h='100%' p={4} display='flex' flexDirection='row' justifyContent='space-between'>

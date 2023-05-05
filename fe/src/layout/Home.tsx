@@ -119,7 +119,12 @@ export default function Home(){
     dispatch(newPost(newpost))
     closeModal()
   }
-  
+  const validate = () => {
+    return newpost.descrip.length === 0
+  }
+  useEffect(() => {
+    validate()
+  },[newpost.descrip || newpost.img])
   return (
       <Box>
           <Navbar />
@@ -204,7 +209,7 @@ export default function Home(){
 
                       </ModalBody>
                       <ModalFooter>
-                        <Button colorScheme='blue' onClick={handleUpPost} w='100%'>
+                        <Button colorScheme='blue' onClick={handleUpPost} w='100%' isDisabled={validate()}>
                           {loading ? <Spinner /> : 'Post'}
                         </Button>
                       </ModalFooter>

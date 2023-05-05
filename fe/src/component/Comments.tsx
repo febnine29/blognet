@@ -53,9 +53,9 @@ export default function Comments({ userId, postId, createdAt,comments}: CommentP
             try {
                 await axios.get(`http://localhost:5000/api/v1/auth/getUserId=${id}`)
                 .then(response => {
-                    setAva(response.data.infor[0].coverPic)
-                    setUser(response.data.infor[0].name)
-                    console.log(response.data.infor);
+                    setAva(response.data.info[0].coverPic)
+                    setUser(response.data.info[0].name)
+                    console.log(response.data.info);
                     
                 })
             } catch(error) {

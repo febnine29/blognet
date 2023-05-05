@@ -15,6 +15,7 @@ import Profile from './layout/Profile';
 import Test from './component/Test';
 import './App.css';
 import Chat from './layout/Chat';
+import ChatBoxDetail from './component/ChatBoxDetail';
 
 function App() {
   return (
@@ -45,9 +46,15 @@ function App() {
             }
           />
           <Route 
-            path="/chatId/:fromid"
+            path="/chat"
             element={
               <Chat />
+            }
+          />
+          <Route 
+            path="/chatId/:fromid/:toid"
+            element={
+              <ChatBoxDetail />
             }
           />
           {/* {userList && userList.map(userId => ( */}

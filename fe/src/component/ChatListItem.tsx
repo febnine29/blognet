@@ -1,7 +1,44 @@
-import { Box } from "@chakra-ui/react";
-
-export default function ChatListItem(){
-    return(
-        <Box>test</Box>
+import {useState, useEffect} from 'react'
+import { Flex,Box, Avatar } from "@chakra-ui/react";
+import axios from 'axios';
+interface IUser{
+    profilePic: string;
+    name: string;
+    onSelect: (id: number) => void;
+}
+export default function ChatListItem({toid, index, onSelect}:any){
+    // const [ava, setAva] = useState<IUser | null>(null)
+    const [ava, setAva] = useState<string>('')
+    const [name, setName] = useState<string>('')
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5000/api/v1/auth/getUserId=${toid}`)
+                // console.log(response.data.info[0]);
+                setAva(response.data.info[0].profilePic)
+                
+                setName(response.data.info[0].name)
+            } catch (error){ console.log(error); }
+        }
+        fetchUserInfo()
+        
+    },[toid])
+        console.log(ava, name);
+    const handleSelect = () => {
+        onSelect(toid)
+    }
+    return (
+        <Flex w='100%' p={3} _hover={{borderRadius: '10px', bgColor: 'gray.100'}}
+            cursor="pointer"
+            onClick={handleSelect}
+        >
+            <Flex>
+                <Avatar src={ava} name={name} w='56px' h='56px'/>
+            </Flex>
+            <Flex w="100%" pl={4} flexDirection='column' justifyContent='center'>
+                <Box textAlign='left'>{name}</Box>  
+                <Flex fontSize='14px' color='gray'>testing message</Flex>
+            </Flex>
+        </Flex>
     )
 }
