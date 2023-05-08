@@ -33,7 +33,7 @@ export default function NavSide(){
                     <Icon as={BsPeopleFill} fontSize={18} mr={2} color='blue.500'/> Friends
                 </Flex>
             </Link>
-
+{/* 
             <Link to="/profileId/1">
                 <Flex
                     padding={3}
@@ -43,7 +43,7 @@ export default function NavSide(){
                 >
                     Projects
                 </Flex>
-            </Link>
+            </Link> */}
         </Flex>
     </Box>
     )

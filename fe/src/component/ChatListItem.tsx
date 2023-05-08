@@ -6,7 +6,7 @@ interface IUser{
     name: string;
     onSelect: (id: number) => void;
 }
-export default function ChatListItem({toid, index, onSelect}:any){
+export default function ChatListItem({toid, chatId, onSelect}:any){
     // const [ava, setAva] = useState<IUser | null>(null)
     const [ava, setAva] = useState<string>('')
     const [name, setName] = useState<string>('')
@@ -23,9 +23,8 @@ export default function ChatListItem({toid, index, onSelect}:any){
         fetchUserInfo()
         
     },[toid])
-        console.log(ava, name);
     const handleSelect = () => {
-        onSelect(toid)
+        onSelect(chatId)
     }
     return (
         <Flex w='100%' p={3} _hover={{borderRadius: '10px', bgColor: 'gray.100'}}

@@ -9,6 +9,26 @@ export interface Ilogin{
     password: string;
 }
 export const Color = "#4200eb"
+export interface IChatRoom{
+    id: number;
+    members: number[];
+    createdAt: string
+}
+export interface IChat{
+    id: number;
+    chatId: number;
+    fromId: number;
+    toId:number;
+    descrip: string;
+    createdAt: string
+}
+export interface IMessage{
+    chatId: number;
+    fromId: number;
+    toId:number | undefined;
+    descrip: string;
+    createdAt: string
+}
 export interface IComment{
     id: number;
     descrip: string;

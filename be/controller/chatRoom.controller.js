@@ -18,6 +18,23 @@ const chatController = {
             res.status(401).json({status: "error", message: error.message })
         }
     },
+    getChatRoomById: async (req, res) => {
+        try {
+            const { id } = req.params
+            const [rows, fields] = await pool.query('select * from chatroom where id = ?', [id])
+            const result = rows.map(row => {
+                return {
+                    ...row,
+                    members: JSON.parse(row.members)
+                    }
+                })
+            res.json({
+                result
+            })
+        } catch (error){
+            res.status(401).json({status: "error", message: error.message })
+        }
+    },
     create: async (req, res) => {
         try {
             const { members, createdAt } = req.body

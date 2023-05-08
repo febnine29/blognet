@@ -38,9 +38,7 @@ export default function Comments({ userId, postId, createdAt,comments}: CommentP
     // const postComments = comments?.filter((comment) => comment.postId === postId)
     const [disable, setDisable] = useState<boolean>(false)
     const validate = () => {
-        if(comment.descrip.length === 0){
-            return false
-        } else return true
+        return comment.descrip.length === 0
     }
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()

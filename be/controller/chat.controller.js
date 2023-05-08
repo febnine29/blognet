@@ -26,7 +26,7 @@ const chatController = {
     getConversation: async (req, res) => {
         try {
             const { id } = req.params
-            const [rows, fields] = await pool.query("select * from chat where id", [id])
+            const [rows, fields] = await pool.query("select * from chat where chatId = ?", [id])
             res.json({
                 result: rows
             })

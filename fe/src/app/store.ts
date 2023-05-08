@@ -5,6 +5,8 @@ import PostSlice from '../type/PostSlice';
 import CommentSlice from '../type/CommentSlice';
 import ChildrenCmtSlice from '../type/ChildrenCmtSlice';
 import UserSlice from '../type/UserSlice';
+import ChatSlice from '../type/ChatSlice';
+import ChatRoomSlice from '../type/ChatRoomSlice';
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
@@ -12,7 +14,9 @@ export const store = configureStore({
     posts: PostSlice,
     comments: CommentSlice,
     childrenCmt: ChildrenCmtSlice,
-    user: UserSlice
+    user: UserSlice,
+    chats: ChatSlice,
+    chatRooms: ChatRoomSlice
   },
 });
 

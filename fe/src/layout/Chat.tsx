@@ -10,6 +10,11 @@ import axios from 'axios'
 import dayjs from 'dayjs'
 import ChatList from "../component/ChatList";
 import ChatBoxDetail from "../component/ChatBoxDetail";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "../app/store";
+import { chatRoomSelector, getAllChatRooms } from "../type/ChatRoomSlice";
+import { getChatData } from "../type/ChatSlice";
+import { log } from "console";
 interface IMessage{
     descrip: string;
     fromId: number;
@@ -21,28 +26,16 @@ interface IChatList{
     toId: number
 }
 function Chat() {
+    const dispatch = useDispatch<AppDispatch>()
     const {fromid} = useParams()
     const user = JSON.parse(localStorage.getItem('userInformation') || '{}');
-    const [chatList, setChatList] = useState<IChatList[] | null>(null)
-    const [selectedToid, setSelectedToid] = useState<number | null>(null)
+    const [selectedChatId, setSelectedChatId] = useState<number | null>(null)
     const [socket, setSocket] = useState<Socket | null>(null);
     const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
-    const [text, setText] = useState<IMessage>({
-        descrip: '',
-        fromId: user[0].id,
-        toId: 0,
-        createdAt: ''
-    })
-    useEffect(() => {
-        const fetchChatList = async () => {
-            try {
-                const response = await axios.get(`http://localhost:5000/api/v1/chat/getChatList=${fromid}`)
-                setChatList(response.data)
-            } catch(error) {console.log(error)};
-        }
-        fetchChatList()
-    },[])
-    const userid = user[0].id
+    
+
+    const userid = user[0]?.id!
+
     useEffect(() => {
         if (!socket) {
             const newSocket = io('http://localhost:8800');
@@ -64,38 +57,43 @@ function Chat() {
             
         })
     },[socket, receiveMessage])
-
-    useEffect(() => {
-        // console.log(chatList);
-    },[])
-    const handleSubmit = async () => {
-        let now = dayjs()
-        let output = now.format('YYYY-MM-DD HH:mm:ss')
-        await new Promise<void>((resolve) => {
-            setText({ ...text, createdAt: output })
-            resolve();
-        });
-        socket?.emit('send-message', text)
-    }
-    const handleSelectToid = (id:number) => {
-        setSelectedToid(id);
+    const handleSelectChatId = (id:number) => {
+        setSelectedChatId(id);
     }
     useEffect(() => {
         // console.log(receiveMessage)
     },[receiveMessage])
-    // useEffect(() => {
-        
-    //     console.log(onlineUsers);
-    // },[onlineUsers])
+    const [senderId, setSenderId] = useState<number>(0)
+    const fetchMembers = async (id:number) => {
+        try {
+            const res = await axios.get(`http://localhost:5000/api/v1/chatRoom/getChatRoomId=${id}`)
+            if(res.data.result[0]?.members?.length !== 0){
+                const member = res.data.result[0]?.members?.find((mem:any) => mem !== userid);
+                setSenderId(member)
+            }
+        } catch(error){console.log(error)}
+    }
+    useEffect(() => {
+        dispatch(getAllChatRooms())
+        if(selectedChatId){
+            dispatch(getChatData(selectedChatId))
+            fetchMembers(selectedChatId)
+        }
+    },[selectedChatId])
+    
+    console.log('member: ', senderId);
     return (
         <Box className="chat">
             <Navbar />
             <Flex className="chat-detail" w='100%' h='min(100vh - 56px)' p={2} bgColor="#f7f7f7" justifyContent='space-between'>
                 <Flex className="chat-list" flexDirection='column' w='35%' bgColor="white" borderRadius='10px' p={4}>
-                    <ChatList fromid={user[0].id!} onSelectMessage={handleSelectToid}/>
+                    <ChatList fromid={user[0].id!} onSelectMessage={handleSelectChatId}/>
                 </Flex>
                 <Flex className='chat-box' w='64%' h='100%' flexDirection='column' bgColor="white" borderRadius='10px' p={4}>
-                    <ChatBoxDetail toid={selectedToid} fromid={user[0].id!}/>
+                    {selectedChatId ? 
+                        <ChatBoxDetail chatid={selectedChatId} fromid={user[0].id!} senderId={senderId}/>
+                    : <Box>Select a user to direct</Box>}
+                    
                 </Flex>
             </Flex>
         </Box>

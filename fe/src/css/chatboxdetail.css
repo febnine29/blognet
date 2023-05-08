@@ -1,0 +1,14 @@
+
+.your-message,
+.other-message{
+    padding: 8px 15px;
+    border-radius: 50px;
+}
+.your-message{
+    margin-left: auto;
+    background: #4200eb;
+    color: white
+}
+.other-message{
+    background: rgb(228, 228, 228);
+}

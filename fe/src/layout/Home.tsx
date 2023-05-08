@@ -19,6 +19,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { storage } from '../firebase';
 import { dateNow } from '../type/common';
 import dayjs from 'dayjs'
+import { getAllChatRooms } from '../type/ChatRoomSlice';
 
 export default function Home(){
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -38,7 +39,7 @@ export default function Home(){
     descrip: "",
     userId: userInformation[0]?.id!,
     img: downloadUrl,
-    createdAt: dateNow,
+    createdAt: '',
     isLiked: "0"
   })
   // ----------SHOW PREVIEW SELECTED IMAGES----------
@@ -108,12 +109,6 @@ export default function Home(){
     console.log(images)
   }
   const handleUpPost = async () => {
-    let now = dayjs()
-    let output = now.format('YYYY-MM-DD HH:mm:ss')
-    await new Promise<void>((resolve) => {
-      setNewPost({ ...newpost, createdAt: output })
-      resolve();
-    });
     setLoading(true)
     await uploadFiles();
     dispatch(newPost(newpost))
@@ -125,6 +120,15 @@ export default function Home(){
   useEffect(() => {
     validate()
   },[newpost.descrip || newpost.img])
+  
+  useEffect(() => {
+    let now = dayjs()
+    let output = now.format('YYYY-MM-DD HH:mm:ss')
+    setNewPost({ ...newpost, createdAt: output })
+  },[dispatch])
+  useEffect(()=> {
+    dispatch(getAllChatRooms())
+  },[])
   return (
       <Box>
           <Navbar />

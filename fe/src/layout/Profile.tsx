@@ -19,7 +19,8 @@ import { dateNow } from '../type/common';
 import { useParams } from 'react-router';
 import dayjs from 'dayjs'
 import { BsCameraFill } from 'react-icons/bs';
-
+import {MdOutlineMail, MdWorkOutline} from 'react-icons/md'
+import { TbBuildingCommunity } from 'react-icons/tb';
 interface IUser{
   id: number;
   username: string;
@@ -72,7 +73,7 @@ export default function Profile(){
     descrip: "",
     userId: userInformation[0].id,
     img: downloadUrl,
-    createdAt: dateNow,
+    createdAt: '',
     isLiked: "0"
   })
   // ----------SHOW PREVIEW SELECTED IMAGES----------
@@ -142,17 +143,16 @@ export default function Profile(){
     console.log(images)
   }
   const handleUpPost = async () => {
-    let now = dayjs()
-    let output = now.format('YYYY-MM-DD HH:mm:ss')
-    await new Promise<void>((resolve) => {
-      setNewPost({ ...newpost, createdAt: output })
-      resolve();
-    });
     setLoading(true)
     await uploadFiles();
     dispatch(newPost(newpost))
     closeModal()
   }
+  useEffect(() => {
+    let now = dayjs()
+    let output = now.format('YYYY-MM-DD HH:mm:ss')
+    setNewPost({ ...newpost, createdAt: output })
+  },[dispatch])
   return (
       <Box>
           <Navbar />
@@ -178,8 +178,12 @@ export default function Profile(){
                 </Flex>
             </Flex>
             <Flex h='100%' p={4} display='flex' flexDirection='row' justifyContent='space-between'>
-                <Flex w='380px' maxH='600px' className='shadow-box' px={3} py={3} mb={4} ml='auto' mr={6} bgColor='white' borderRadius='10px'>
-
+                <Flex w='380px' maxH='600px' className='shadow-box' flexDirection='column' p={4} mb={4} ml='auto' mr={6} bgColor='white' borderRadius='10px'>
+                  <Box fontSize='20px' textAlign='left' fontWeight='semibold'>Introduce</Box>
+                  <Button color='gray.600' my={4}>Edit Your Informations</Button>
+                  <Flex alignItems='center' color='gray.600'><Icon as={MdWorkOutline} mr={2} color='gray.600' fontSize={20}/>Working at</Flex>
+                  <Flex alignItems='center' color='gray.600' my={2}><Icon as={MdOutlineMail} mr={2} color='gray.600' fontSize={20}/>Email address</Flex>
+                  <Flex alignItems='center' color='gray.600'><Icon as={TbBuildingCommunity} mr={2} color='gray.600' fontSize={20}/>Live at</Flex>
                 </Flex>
                 <Flex className='blog-side' mr='auto' w='500px' justifyItems='center' alignItems="center" flexDirection='column' > 
                     <Flex flexDirection='column' className='create-status shadow-box' px={3} py={3} mb={4} bgColor='white' borderRadius='10px' maxW='590px' minW="500px">

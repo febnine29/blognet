@@ -20,6 +20,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import SingleCommentCp from './SingleCommentCp';
+import { dateNow } from '../type/common';
 interface SinglePostProp{
     postId: number;
     userId: number;
@@ -120,7 +121,6 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
         try {
         const response = await axios.get(`http://localhost:5000/api/v1/auth/getUserId=${userId}`);
             setUsername(response.data.info[0].name);
-            console.log(username);
             
         } catch (error) {
             console.error(error);
@@ -131,7 +131,7 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
     }, [userId]);
     const [comment, setComment] = useState<SingleComment>({
         descrip: '',
-        userId: userId,
+        userId: userInformation[0]?.id!,
         postId: postId,
         createdAt: '',
         isLiked: '0'
@@ -141,12 +141,6 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
     }
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        let now = dayjs()
-        let output = now.format('YYYY-MM-DD HH:mm:ss')
-        await new Promise<void>((resolve) => {
-            setComment({...comment, createdAt: output})
-            resolve();
-        });
         dispatch(newComment(comment))
         setComment({...comment, descrip: ''})
     }
@@ -156,7 +150,11 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
     useEffect(() => {
         validate();
     },[])
-
+    useEffect(() => {
+        let now = dayjs()
+        let output = now.format('YYYY-MM-DD HH:mm:ss')
+        setComment({...comment, createdAt: output})
+    },[dispatch])
     return (
         <Box className='shadow-box' px={4} pt={4} pb={1} mb={4} bgColor='white' borderRadius='10px' w='500px'>
             <Flex className='post-info' alignItems='center' w="100%">
@@ -267,7 +265,7 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                     <Flex className="comment-box" flexDirection='column' w="100%" borderTopWidth="1px" borderTopColor='gray.200' py={2}>
                         {showComment && userInformation[0]?.id! !== undefined && (
                         <Flex textAlign='left' alignItems='center' mb={2}>
-                        <Avatar name={username} size="sm" mr={2}></Avatar>
+                        <Avatar name={userInformation[0].name} size="sm" mr={2}></Avatar>
                         <form onSubmit={handleSubmit} style={{width: '100%', display: 'flex', flexDirection: 'row'}}>
                             <Input
                             placeholder='Write a comment...'

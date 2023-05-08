@@ -25,31 +25,6 @@ export default function SingleCommentCp({id,descrip, userId,postId, createdAt, i
             
         fetchUser();
     },[userId])
-    const dispatch = useDispatch<AppDispatch>()
-    const [comment, setComment] = useState<SingleComment>({
-        descrip: '',
-        userId: userId,
-        postId: postId,
-        createdAt: '',
-        isLiked: '0'
-    })
-    const validate = () => {
-        if(comment.descrip.length === 0){
-            return false
-        } else return true
-    }
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        dispatch(newComment(comment))
-        setComment({...comment, descrip: ''})
-    }
-    useEffect(() => {
-        let now = dayjs()
-        let dateCmt = now.format('YYYY-MM-DD HH:mm:ss')
-        setComment({...comment, createdAt: dateCmt})
-        validate()
-        console.log(comment)
-    },[comment.descrip])
     return (
         <Flex  position='relative' textAlign='left' alignItems='center' mb={7} >
             <Avatar name={name} size="sm" mr={2}></Avatar>
