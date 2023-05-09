@@ -111,7 +111,10 @@ export default function Home(){
   const handleUpPost = async () => {
     setLoading(true)
     await uploadFiles();
-    dispatch(newPost(newpost))
+    let now = dayjs()
+    let output = now.format('YYYY-MM-DD HH:mm:ss')
+    const newupdate = { ...newpost, createdAt: output }
+    dispatch(newPost(newupdate))
     closeModal()
   }
   const validate = () => {
@@ -121,11 +124,6 @@ export default function Home(){
     validate()
   },[newpost.descrip || newpost.img])
   
-  useEffect(() => {
-    let now = dayjs()
-    let output = now.format('YYYY-MM-DD HH:mm:ss')
-    setNewPost({ ...newpost, createdAt: output })
-  },[dispatch])
   useEffect(()=> {
     dispatch(getAllChatRooms())
   },[])

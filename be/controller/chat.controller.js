@@ -48,10 +48,13 @@ const chatController = {
     },
     getLastestMessage: async (req, res) => {
         try {
-            const { fromId, toId } = req.body
-            const [rows, fields] = await pool.query("select * from chat where id = (select max(id) from chat where fromId = ? and toId = ?)", [fromId,toId])
+            const { id } = req.params
+            const [rows, field] = await pool.query("select * from chat where chatId = ? order by id desc limit 1 ", [id])
+            const { maxId } = rows
+            const [rows1, field1] = await pool.query("select * from chat where id = ?", [maxId])
+            console.log(rows);
             res.json({
-                message: rows
+                result: rows[0]
             })
         } catch (error) {
             res.status(401).json({status: "error", message: error.message })
@@ -59,15 +62,19 @@ const chatController = {
     },
     create: async (req, res) => {
         try {
-            const { chatId,descrip, fromId, toId, createdAt } = req.body
-            const sql = "insert into chat (chatId,descrip, fromId, toId, createdAt) values (?, ?, ?, ?, ?)"
-            const [rows, fields] = await pool.query(sql, [chatId,descrip, fromId, toId, createdAt])
+            const { chatId, descrip, fromId, toId, createdAt } = req.body;
+            const insertSql = "INSERT INTO chat (chatId, descrip, fromId, toId, createdAt) VALUES (?, ?, ?, ?, ?)";
+            await pool.query(insertSql, [chatId, descrip, fromId, toId, createdAt]);
+    
+            const selectSql = "SELECT * FROM chat WHERE chatId = ? AND descrip = ? AND fromId = ? AND toId = ? AND createdAt = ?";
+            const [rows, fields] = await pool.query(selectSql, [chatId, descrip, fromId, toId, createdAt]);
+    
             res.status(201).json({
-                result: "New message !"
-            })
+                result: rows[0]
+            });
         } catch (error) {
-            console.log(error)
-            res.status(401).json({ status: "error" })
+            console.log(error);
+            res.status(401).json({ status: "error" });
         }
     },
     delete: async (req, res) => {

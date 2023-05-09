@@ -1,12 +1,14 @@
 import {useState, useEffect} from 'react'
 import { Flex,Box, Avatar } from "@chakra-ui/react";
 import axios from 'axios';
+import { IMessage } from '../type/common';
 interface IUser{
     profilePic: string;
     name: string;
     onSelect: (id: number) => void;
+    lastMess: IMessage
 }
-export default function ChatListItem({toid, chatId, onSelect}:any){
+export default function ChatListItem({toid, chatId, onSelect, lastMess}:any){
     // const [ava, setAva] = useState<IUser | null>(null)
     const [ava, setAva] = useState<string>('')
     const [name, setName] = useState<string>('')
@@ -36,7 +38,9 @@ export default function ChatListItem({toid, chatId, onSelect}:any){
             </Flex>
             <Flex w="100%" pl={4} flexDirection='column' justifyContent='center'>
                 <Box textAlign='left'>{name}</Box>  
-                <Flex fontSize='14px' color='gray'>testing message</Flex>
+                <Flex fontSize='14px' color='gray'>
+                    {/* {lastMess?.descrip} */}
+                    </Flex>
             </Flex>
         </Flex>
     )

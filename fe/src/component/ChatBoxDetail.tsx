@@ -7,30 +7,49 @@ import '../css/chatboxdetail.css'
 import { AppDispatch } from '../app/store'
 import { chatSelector, getChatData } from '../type/ChatSlice'
 import { chatRoomSelector, getAllChatRooms } from '../type/ChatRoomSlice'
-import { IMessage } from '../type/common'
+import { IChat, IMessage } from '../type/common'
 import { newMessage } from '../type/ChatSlice'
+import { io,Socket } from "socket.io-client";
 import dayjs from 'dayjs'
 import InputEmoji from 'react-input-emoji'
+import ShowMessages from './ShowMessages'
 
-export default function ChatBoxDetail({chatid, fromid, senderId}:any){
-    // const {fromid} = useParams()
-    
+export default function ChatBoxDetail({chatid, fromid, senderId, chat}:any){
     const dispatch = useDispatch<AppDispatch>()
     const [ava, setAva] = useState('')
     const [name, setName] = useState('')
     const [chatidd , setChatIdd] = useState<number>(chatid)
     const [receiveId, setToid] = useState<number>(senderId)
-    const {chats} = useSelector(chatSelector)
-
-    console.log(senderId, chatid);
+    const [allChats, setAllChats] = useState<IChat[]>([])
+    const [socket, setSocket] = useState<Socket | null>(null);
+    const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
+    const toid = chat?.members?.find((mem:any) => mem !== fromid)
+    
+    useEffect(() => {
+        if (!socket) {
+            const newSocket = io('http://localhost:8800');
+            setSocket(newSocket);
+            newSocket.emit("new-user-add", fromid);
+        }
+        socket?.on('get-users', (users) => {
+            setOnlineUsers(users);
+        });
+        
+    }, [socket,fromid]);
+    // console.log(senderId, chatid);
     
     const [newMess, setNewMess] = useState<IMessage>({
         descrip: '',
         fromId: fromid,
-        toId: senderId,
-        chatId: chatidd,
+        toId: toid,
+        chatId: chat.id,
         createdAt: ''
     }) 
+    // useEffect(() => {
+    //     if(chatid !== null){
+    //         setNewMess({...newMess, chatId: chatid})
+    //     }
+    // },[chatid])
     useEffect(() => {
         if(senderId){
             setNewMess({...newMess, toId: senderId})
@@ -42,7 +61,7 @@ export default function ChatBoxDetail({chatid, fromid, senderId}:any){
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                const response = await  axios.get(`http://localhost:5000/api/v1/auth/getUserId=${newMess.toId}`)
+                const response = await  axios.get(`http://localhost:5000/api/v1/auth/getUserId=${toid}`)
                 setAva(response.data.info[0]?.profilePic!)
                 setName(response.data.info[0]?.name!)
             } catch (error){console.log(error);}
@@ -54,56 +73,54 @@ export default function ChatBoxDetail({chatid, fromid, senderId}:any){
     const handleChange = (text: any) => {
         setText(text)
     }
-    const handleSubmitMessage = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmitMessage = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        dispatch(newMessage(newMess))
-        setNewMess({ ...newMess, descrip: '' })
-    }
-    useEffect(() => {
+        // dispatch(newMessage(newMess))
         let now = dayjs()
         let output = now.format('YYYY-MM-DD HH:mm:ss')
-        setNewMess({ ...newMess, createdAt: output, descrip: text })
-        // setNewMess()
-    },[dispatch])
-    useEffect(()=> {
-        messageEnd.current?.scrollIntoView({ behavior: "smooth" });
-      },[chats])
+        const newUpdate = { ...newMess, createdAt: output}
+        console.log('newMess', newMess);
+        try{
+            const res = await axios.post(`http://localhost:5000/api/v1/chat/create`, newUpdate)
+            if(res.status === 201){
+                // setAllChats([...allChats, res.data.result])
+                socket?.emit("send-message", res.data.result)
+            }
+        } catch(error){console.log(error)}
+        setText('')
+    }
+
     useEffect(() => {
-        console.log('newmess:', newMess);
         validate()
     },[newMess.descrip])
+
     useEffect(() => {
-        console.log(text);
         setNewMess({ ...newMess, descrip: text })
     },[text])
+    useEffect(() => {
+        socket?.on("receive-message", (data) => {
+            if(data.chatId === chat.id){
+                dispatch(getChatData(chat.id))
+            }
+        })
+    },[socket])
+
     return (
         <Flex flexDirection='column' w='100%' h='100%'>
-            <Flex w='100%' h='80px' alignItems='center'>
+            <Flex w='100%' h='80px' alignItems='center' className='username-chat'>
                 <Avatar src={ava} name={name}/>
                 <Flex flexDirection='column' alignItems='flex-start' w='100%' pl={3} >
                     <Text fontWeight='bold' textAlign='left'>{name}</Text>
                     <Text fontSize='14px' color='gray'>inactive or not</Text>
                 </Flex>
             </Flex>
-            <Flex w='100%' h='100%' flexDirection='column' p={4}>
-                {chats?.map((item) => (
-                <Flex key={item.id} w='100%' 
-                    mb={2}
-                    alignItems='flex-end'
-                >
-                    <Avatar src={ava} name={name} display={item.fromId === fromid ? 'none' : 'block'} size='sm' mr={2}/>
-                    <Box display='inline-block' className={item.fromId === fromid ? 'your-message' : 'other-message'}>
-                        {item.descrip}
-                    </Box>
-                </Flex>
-                ))}
-            </Flex>
+            <ShowMessages allChats={allChats} ava={ava} name={name} messageEnd={messageEnd} fromid={fromid}/>
             <Flex w='100%' h='80px' px={4}>
-                <form onSubmit={handleSubmitMessage} style={{display: 'flex', alignItems:'center', marginLeft:'auto', width: '100%'}}
-                        >
+                <form onSubmit={handleSubmitMessage} style={{display: 'flex', alignItems:'center', marginLeft:'auto', width: '100%'}}>
                     <InputEmoji placeholder='type a message'
                         value={text}
                         onChange={handleChange}
+                    
                     />
                     <Button type='submit' isDisabled={validate()}>Send</Button>
                 </form>

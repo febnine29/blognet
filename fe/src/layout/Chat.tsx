@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../app/store";
 import { chatRoomSelector, getAllChatRooms } from "../type/ChatRoomSlice";
 import { getChatData } from "../type/ChatSlice";
-import { log } from "console";
+import { IChatRoom } from "../type/common";
 interface IMessage{
     descrip: string;
     fromId: number;
@@ -28,12 +28,12 @@ interface IChatList{
 function Chat() {
     const dispatch = useDispatch<AppDispatch>()
     const {fromid} = useParams()
+    const {chatRooms} = useSelector(chatRoomSelector)
     const user = JSON.parse(localStorage.getItem('userInformation') || '{}');
     const [selectedChatId, setSelectedChatId] = useState<number | null>(null)
     const [socket, setSocket] = useState<Socket | null>(null);
     const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
-    
-
+    const [currentChat, setCurrentChat] = useState<IChatRoom | null>(null)
     const userid = user[0]?.id!
 
     useEffect(() => {
@@ -47,22 +47,10 @@ function Chat() {
         });
         
     }, [socket,user]);
-    // send message to socket server
-    const [receiveMessage, setReceiveMessage] = useState<IMessage | null>(null)
-    useEffect(() => {
-        socket?.on("receive-message", (data) => {
-            setReceiveMessage(data)
-            console.log(data);
-            console.log('running');
-            
-        })
-    },[socket, receiveMessage])
+
     const handleSelectChatId = (id:number) => {
         setSelectedChatId(id);
     }
-    useEffect(() => {
-        // console.log(receiveMessage)
-    },[receiveMessage])
     const [senderId, setSenderId] = useState<number>(0)
     const fetchMembers = async (id:number) => {
         try {
@@ -81,17 +69,36 @@ function Chat() {
         }
     },[selectedChatId])
     
-    console.log('member: ', senderId);
+    // console.log('member: ', senderId);
     return (
         <Box className="chat">
             <Navbar />
             <Flex className="chat-detail" w='100%' h='min(100vh - 56px)' p={2} bgColor="#f7f7f7" justifyContent='space-between'>
                 <Flex className="chat-list" flexDirection='column' w='35%' bgColor="white" borderRadius='10px' p={4}>
-                    <ChatList fromid={user[0].id!} onSelectMessage={handleSelectChatId}/>
+                    
+                <Box w='100%' textAlign='left' fontSize='30px' fontWeight='bold' mb={4}>Chats</Box>
+                    {chatRooms?.map((item:any) => (
+                        <div
+                            key={item.id}
+                            onClick={() => {
+                                setCurrentChat(item);
+                                if(item !== null){
+                                    dispatch(getChatData(item.id))
+                                }
+                            }}
+                        >
+                            
+                        <ChatList 
+                            chat={item} 
+                            fromid={user[0].id!} 
+                            onSelectMessage={handleSelectChatId} 
+                        />
+                        </div>
+                    ))}
                 </Flex>
                 <Flex className='chat-box' w='64%' h='100%' flexDirection='column' bgColor="white" borderRadius='10px' p={4}>
-                    {selectedChatId ? 
-                        <ChatBoxDetail chatid={selectedChatId} fromid={user[0].id!} senderId={senderId}/>
+                    {currentChat !== null ? 
+                        <ChatBoxDetail chat={currentChat} chatid={selectedChatId} fromid={user[0].id!} senderId={senderId} />
                     : <Box>Select a user to direct</Box>}
                     
                 </Flex>

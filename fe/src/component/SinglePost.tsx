@@ -1,5 +1,5 @@
 import React, { useEffect,useState } from 'react';
-import { Box, Flex,Menu, Link, MenuButton, MenuList, MenuItem, Avatar, Text, Button,Image, Input } from '@chakra-ui/react'
+import { Box, Flex,Menu, Link, MenuButton, MenuList, MenuItem, Avatar, Text, Button,Image, Input, useDisclosure } from '@chakra-ui/react'
 import { Icon } from "@chakra-ui/icons"
 import dayjs from 'dayjs';
 import axios from 'axios'
@@ -21,6 +21,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import SingleCommentCp from './SingleCommentCp';
 import { dateNow } from '../type/common';
+import Alert from './AlertDialog';
 interface SinglePostProp{
     postId: number;
     userId: number;
@@ -33,6 +34,7 @@ dayjs.extend(relativeTime)
 export default function SinglePost({postId, descrip, userId, img, createdAt, isLiked}: SinglePostProp){
     const dispatch = useDispatch<AppDispatch>()
     const navigate = useNavigate()
+    const { isOpen, onOpen, onClose } = useDisclosure()
     const date = dayjs(createdAt).fromNow();
     const dateFormat = dayjs(createdAt).format('DD/MM lúc HH:mm')
     const [output, setOutput] = React.useState('')
@@ -141,7 +143,10 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
     }
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        dispatch(newComment(comment))
+        let now = dayjs()
+        let output = now.format('YYYY-MM-DD HH:mm:ss')
+        const newcmt = {...comment, createdAt: output}
+        dispatch(newComment(newcmt))
         setComment({...comment, descrip: ''})
     }
     useEffect(() => {
@@ -150,13 +155,9 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
     useEffect(() => {
         validate();
     },[])
-    useEffect(() => {
-        let now = dayjs()
-        let output = now.format('YYYY-MM-DD HH:mm:ss')
-        setComment({...comment, createdAt: output})
-    },[dispatch])
     return (
         <Box className='shadow-box' px={4} pt={4} pb={1} mb={4} bgColor='white' borderRadius='10px' w='500px'>
+            <Alert isOpen={isOpen} onOpen={onOpen} onClose={onClose} handleDeletePost={handleDeletePost}/>
             <Flex className='post-info' alignItems='center' w="100%">
                 <Avatar name={username} size='md'/>
                 <Box ml={2}>
@@ -175,7 +176,7 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                         <MenuList px={2}>
                             <MenuItem 
                                 fontWeight='medium' color='red' borderRadius='5px' icon={<FaRegTrashAlt />}
-                                onClick={handleDeletePost}
+                                onClick={onOpen}
                             >
                                 Delete
                             </MenuItem>
@@ -291,7 +292,7 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                             isLiked={comment.isLiked}
                         />
                     // <Comments userId={userInformation[0].id} comments={cmtArray} postId={postId} createdAt={createdAt}/>
-                ))}
+                    ))}
             </Flex>
         </Box>
     )

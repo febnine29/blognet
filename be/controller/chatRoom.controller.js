@@ -3,8 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 const chatController = {
     getAllChatRooms: async (req, res) => {
         try{
-            // const [rows, fields] = await pool.query('select * from posts LEFT JOIN likes ON posts.id = likes.postId ')
-            const [rows, fields] = await pool.query('select * from chatroom ')
+            const [rows, fields] = await pool.query('select * from chatroom order by id desc')
             const result = rows.map(row => {
                 return {
                     ...row,

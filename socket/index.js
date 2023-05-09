@@ -23,11 +23,11 @@ io.on("connection", (socket) => {
     socket.on("send-message", (data) => {
         const fromId = data.fromId;
         const user = activeUsers.find((user) => user.userId === fromId)
-        if(user){
-            io.emit("receive-message", data)
-            console.log("user", user);
             console.log(data);
-            console.log(user.socketId);
+        if(user){
+            io.emit("receive-message", data) 
+            // console.log("user", user);
+            // console.log(user.socketId);
         }
     })
     socket.on("disconnect", () => {

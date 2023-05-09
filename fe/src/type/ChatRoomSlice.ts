@@ -28,7 +28,7 @@ export const ChatRoomSlice = createSlice({
       builder.addCase(getAllChatRooms.fulfilled, (state, { payload }) => {
         state.chatRoomLoading = false;
         state.chatRooms = payload;
-        console.log('chatRooms:', payload)
+        // console.log('chatRooms:', payload)
       });
       builder.addCase(getAllChatRooms.rejected, (state, action) => {
         state.chatRoomLoading = false;

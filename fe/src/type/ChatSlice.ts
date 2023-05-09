@@ -21,7 +21,7 @@ export const newMessage = createAsyncThunk(
             chatId,
             createdAt
         })
-        console.log(chatId);
+        // console.log(chatId);
         
         dispatch(getChatData(chatId))
     } catch (error) {
