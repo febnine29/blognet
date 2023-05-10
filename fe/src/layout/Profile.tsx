@@ -50,7 +50,6 @@ export default function Profile(){
         try {
         const response = await axios.get(`http://localhost:5000/api/v1/auth/getUserId=${userIdParams}`);
             setName(response.data.info[0].name)
-            console.log(response.data.info[0].name)
         } catch (error) {
             console.error(error);
             }
@@ -153,6 +152,7 @@ export default function Profile(){
     let output = now.format('YYYY-MM-DD HH:mm:ss')
     setNewPost({ ...newpost, createdAt: output })
   },[dispatch])
+
   return (
       <Box>
           <Navbar />
@@ -160,12 +160,16 @@ export default function Profile(){
             <Flex flexDirection='column' w='910px' className='shadow-box' mb={4} m='auto' bgColor='white' borderRadius='10px'>
                 <Box position='relative' className='cover-pic' h='350px' w='100%' borderBottomWidth='2px' borderBottomColor='gray.200'>
                     <Image src={coverPic}/>
+                    {userInformation[0]?.id! === parseInt(userIdParams!) ? 
                     <IconButton position='absolute' bottom='5px' right='5px' aria-label='picture' icon={<BsCameraFill />} bgColor='transparent'/>
-                </Box>
+                    : 'helu'}
+                  </Box>
                 <Flex className='info' justifyContent='flex-start' alignItems='center' w='100%' h='150px' p={3} > 
                     <Flex position='relative' >
                         <Avatar name={name} src={profilePic} size='2xl'/>
+                        {userInformation[0]?.id! === parseInt(userIdParams!) ? 
                         <IconButton position='absolute' bottom='0' right='0' aria-label='picture' icon={<BsCameraFill />} borderRadius='50%' borderWidth='2px' borderColor='white'/>
+                        : undefined}
                     </Flex>
                     <Flex flexDirection='column' textAlign='left' pl={4}>
                         <Text fontSize='30px' fontWeight='semibold'>{name}</Text>
@@ -180,17 +184,21 @@ export default function Profile(){
             <Flex h='100%' p={4} display='flex' flexDirection='row' justifyContent='space-between'>
                 <Flex w='380px' maxH='600px' className='shadow-box' flexDirection='column' p={4} mb={4} ml='auto' mr={6} bgColor='white' borderRadius='10px'>
                   <Box fontSize='20px' textAlign='left' fontWeight='semibold'>Introduce</Box>
+                  {userInformation[0]?.id! === parseInt(userIdParams!) ? 
                   <Button color='gray.600' my={4}>Edit Your Informations</Button>
+                  : undefined}
                   <Flex alignItems='center' color='gray.600'><Icon as={MdWorkOutline} mr={2} color='gray.600' fontSize={20}/>Working at</Flex>
                   <Flex alignItems='center' color='gray.600' my={2}><Icon as={MdOutlineMail} mr={2} color='gray.600' fontSize={20}/>Email address</Flex>
                   <Flex alignItems='center' color='gray.600'><Icon as={TbBuildingCommunity} mr={2} color='gray.600' fontSize={20}/>Live at</Flex>
                 </Flex>
+                
                 <Flex className='blog-side' mr='auto' w='500px' justifyItems='center' alignItems="center" flexDirection='column' > 
+                  {userInformation[0]?.id! === parseInt(userIdParams!) ? 
                     <Flex flexDirection='column' className='create-status shadow-box' px={3} py={3} mb={4} bgColor='white' borderRadius='10px' maxW='590px' minW="500px">
                     <Flex alignItems='center' w='100%'>
                         <Avatar name={userInformation[0]?.name!} w='40px' h='40px' mr={2}/>
                         <Button w="100%" onClick={onOpen} fontWeight='medium' textAlign='left' color="gray.400" borderRadius='50px'>
-                        Write your new status, {userInformation[0]?.name!}?...
+                        Write your new status, {userInformation[0]?.name!}!...
                         </Button>
                     </Flex>
                     <Box w='100%' h='1px' bgColor='gray.200' my={2}></Box>
@@ -269,6 +277,7 @@ export default function Profile(){
                         </ModalContent>
                     </Modal>
                     </Flex>
+                    : undefined}
                     {postLoading && <Spinner sx={{position:'absolute', left: '50%', top: '30%'}}/>}
                     {postsFilter?.map((post) => (
                     <SinglePost 

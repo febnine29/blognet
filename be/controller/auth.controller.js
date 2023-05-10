@@ -70,6 +70,19 @@ const authController = {
             res.status(400).json({ error: error.message })
         }
     },
+    updateAva: async (req, res) => {
+        try {
+            const { id } = req.params
+            const { profilePic } = req.body
+            const [rows, fields] = await pool.query("insert into users (profilePic) values (?) where id = ?", [id, profilePic])
+            
+            res.json({
+                info: rows
+            })
+        } catch (error) {
+            res.status(400).json({ error: error.message })
+        }
+    }
 }
 
 module.exports = authController

@@ -14,10 +14,15 @@ import { io,Socket } from "socket.io-client";
 import dayjs from 'dayjs'
 export default function ShowMessages({ ava, name, messageEnd, fromid, allChats}:any){
     const {chats} = useSelector(chatSelector)
-    
+    const [firstLoad, setFirstLoad] = useState(true);
     useEffect(()=> {
-        messageEnd.current?.scrollIntoView({ behavior: "smooth" });
-      },[chats])
+        if (firstLoad) {
+            messageEnd.current?.scrollIntoView();
+            setFirstLoad(false);
+        } else {
+            messageEnd.current?.scrollIntoView({ behavior: "smooth" });
+        }
+    },[chats])
     return (
        <Flex w='100%' h='100%' flexDirection='column' p={4} className="display-messages" >
             {chats?.map((item:any) => (

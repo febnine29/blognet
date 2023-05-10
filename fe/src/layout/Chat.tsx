@@ -70,6 +70,9 @@ function Chat() {
     },[selectedChatId])
     
     // console.log('member: ', senderId);
+    const chatRoom = chatRooms?.filter((room:any) => room.members.includes(userid));
+    console.log('chatRoom',chatRoom);
+    
     return (
         <Box className="chat">
             <Navbar />
@@ -77,7 +80,7 @@ function Chat() {
                 <Flex className="chat-list" flexDirection='column' w='35%' bgColor="white" borderRadius='10px' p={4}>
                     
                 <Box w='100%' textAlign='left' fontSize='30px' fontWeight='bold' mb={4}>Chats</Box>
-                    {chatRooms?.map((item:any) => (
+                    {chatRoom?.map((item:any) => (
                         <div
                             key={item.id}
                             onClick={() => {
@@ -87,7 +90,7 @@ function Chat() {
                                 }
                             }}
                         >
-                            
+                        
                         <ChatList 
                             chat={item} 
                             fromid={user[0].id!} 

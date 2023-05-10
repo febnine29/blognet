@@ -45,11 +45,9 @@ export default function ChatBoxDetail({chatid, fromid, senderId, chat}:any){
         chatId: chat.id,
         createdAt: ''
     }) 
-    // useEffect(() => {
-    //     if(chatid !== null){
-    //         setNewMess({...newMess, chatId: chatid})
-    //     }
-    // },[chatid])
+    useEffect(() => {
+        console.log('toid', toid);
+    },[toid])
     useEffect(() => {
         if(senderId){
             setNewMess({...newMess, toId: senderId})
@@ -67,7 +65,7 @@ export default function ChatBoxDetail({chatid, fromid, senderId, chat}:any){
             } catch (error){console.log(error);}
         }
         fetchUserInfo()
-    }, [newMess.toId])
+    }, [toid])
     const messageEnd = useRef<HTMLDivElement>(null);
     const [text, setText] = useState('')
     const handleChange = (text: any) => {
@@ -110,7 +108,7 @@ export default function ChatBoxDetail({chatid, fromid, senderId, chat}:any){
             <Flex w='100%' h='80px' alignItems='center' className='username-chat'>
                 <Avatar src={ava} name={name}/>
                 <Flex flexDirection='column' alignItems='flex-start' w='100%' pl={3} >
-                    <Text fontWeight='bold' textAlign='left'>{name}</Text>
+                    <Text fontSize='18px' fontWeight='bold' textAlign='left'>{name}</Text>
                     <Text fontSize='14px' color='gray'>inactive or not</Text>
                 </Flex>
             </Flex>

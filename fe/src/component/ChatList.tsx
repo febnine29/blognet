@@ -63,12 +63,12 @@ export default function ChatList({fromid, onSelectMessage, chat}:IChatList){
                  w='56px' h='56px'/>
             </Flex>
             <Flex w="100%" pl={4} flexDirection='column' justifyContent='center'>
-                <Box textAlign='left' fontSize='18px'>
+                <Box textAlign='left' fontSize='18px' fontWeight='bold'>
                     {name}
                 </Box>  
                 <Flex fontSize='14px' color='gray'>
-                    {lastMess?.fromId === fromid ? 'You: ' : undefined}
-                    <span style={{marginLeft: '5px'}}>{lastMess?.descrip}</span>
+                    <span style={{marginRight: '5px'}}>{lastMess?.fromId === fromid ? 'You: ' : undefined}</span>
+                    <span>{lastMess?.descrip}</span>
                 </Flex>
             </Flex>
         </Flex>
