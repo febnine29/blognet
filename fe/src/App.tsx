@@ -20,6 +20,7 @@ import { getUserInfo } from './type/UserSlice';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from './app/store';
 import ShowSinglePost from './layout/ShowSinglePost';
+import SearchPage from './layout/SearchPage';
 
 function App() {
   const dispatch = useDispatch<AppDispatch>()
@@ -66,6 +67,12 @@ function App() {
             path="/chatId/:fromid/:toid"
             element={
               <ChatBoxDetail />
+            }
+          />
+          <Route 
+            path="/searchpage/:string"
+            element={
+              <SearchPage />
             }
           />
           <Route 

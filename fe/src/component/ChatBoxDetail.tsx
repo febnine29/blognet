@@ -95,6 +95,8 @@ export default function ChatBoxDetail({chatid, fromid, senderId, chat}:any){
     },[text])
     useEffect(() => {
         socket?.on("receive-message", (data) => {
+            console.log('socket message', data);
+            
             if(data.chatId === chat.id){
                 dispatch(getChatData(chat.id))
             }

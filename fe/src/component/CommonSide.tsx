@@ -29,9 +29,9 @@ export default function CommonSide(){
     const [isFollow, setIsFollow] = useState<boolean>()
     const [topUsers, setTopUsers] = useState<ITopUser[] | null>(null)
     const [post, setPost] = useState<ITopPost | null>(null)
-    
     const {comments} = useSelector(commentSelector)
     const cmtArray = comments?.filter((comment) => comment.postId === post?.id)
+    const userInformation = JSON.parse(localStorage.getItem('userInformation') || '{}');
     const fetchTopUser = async () => {
         try{
             const res = await axios.get(`http://localhost:5000/api/v1/follow/getMostFollowed`)
@@ -48,25 +48,45 @@ export default function CommonSide(){
     }
     const fetchUser = async () => {
         try {
-            if(topUsers){
+            // if(topUsers){
             const response = await axios.get(`http://localhost:5000/api/v1/auth/getUserId=${post?.userId}`);
             // if(response.data.info){
                 setUsername(response.data.info.name);
+                if(username){
                 setAva(response.data.info.profilePic)
+            }
                 // console.log(response.data.info);
             // }
-            }
+            // }
         } catch (error) {
             console.error(error);
             }
     };
+    const runFetch = async () => {
+        const topUserRes = await axios.get(`http://localhost:5000/api/v1/follow/getMostFollowed`);
+        const postRes = await axios.get(`http://localhost:5000/api/v1/posts/getPostMostLikes`);
+        const userRes = await axios.get(`http://localhost:5000/api/v1/auth/getUserId=${postRes.data.data[0].userId}`);
     
+        setTopUsers(topUserRes.data.result);
+        setPost(postRes.data.data[0]);
+    
+        // if (post) {
+            setUsername(userRes.data.info.name);
+        // } else if(username){
+             setAva(userRes.data.info.profilePic);
+             if(ava){
+                setIsFollow(false)
+             }
+            // }  else if(userInformation){
+                
+            // }
+    };
     useEffect(() => {
-        fetchTopUser()
-        fetchPostMostLikes()
-        fetchUser()
+        runFetch()
+        // fetchTopUser()
+
     },[])
-    console.log(post);
+    console.log(username, ava, post?.userId);
     
     return (
         <Box className='recent-side' w='30%' minW='350px'>
@@ -91,7 +111,7 @@ export default function CommonSide(){
                     _hover={{bgColor: '#ececec', transition: '0.3s ease'}}
                 >
                     <Flex className='post-info' alignItems='center' w="100%">
-                        <Avatar name={username} size='md' src={ava} borderWidth='2px' borderColor='purple.500' w='40px' h='40px'/>
+                        {username && <Avatar name={username} size='md' src={ava} borderWidth='2px' borderColor='purple.500' w='40px' h='40px'/> }
                         <Box ml={2}>
                             <Text fontWeight='bold' textAlign='left' fontSize='17px' color="gray.600" >
                                 {username}

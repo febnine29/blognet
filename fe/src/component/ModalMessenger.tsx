@@ -31,17 +31,17 @@ export default function ModalMessenger({onOpenMess, isOpenMess, onCloseMess, use
     const [text, setText] = useState('')
     const [socket, setSocket] = useState<Socket | null>(null);
     const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
-    useEffect(() => {
-        if (!socket) {
-            const newSocket = io('http://localhost:8800');
-            setSocket(newSocket);
-            newSocket.emit("new-user-add", currentUserId);
-        }
-        socket?.on('get-users', (users) => {
-            setOnlineUsers(users);
-        });
+    // useEffect(() => {
+    //     if (!socket) {
+    //         const newSocket = io('http://localhost:8800');
+    //         setSocket(newSocket);
+    //         newSocket.emit("new-user-add", currentUserId);
+    //     }
+    //     socket?.on('get-users', (users) => {
+    //         setOnlineUsers(users);
+    //     });
         
-    }, [socket,currentUserId]);
+    // }, [socket,currentUserId]);
     const [newMess, setNewMess] = useState<IMessage>({
         descrip: '',
         fromId: currentUserId,
@@ -99,20 +99,20 @@ export default function ModalMessenger({onOpenMess, isOpenMess, onCloseMess, use
     const handleChange = (text: any) => {
         setText(text)
     }
-    const handleMessData = async() => {
-        let now = dayjs()
-        let output = now.format('YYYY-MM-DD HH:mm:ss')
-        const newUpdate = { ...newMess, createdAt: output}
-        try{
-            const res = await axios.post(`http://localhost:5000/api/v1/chat/create`, newUpdate)
-            if(res.status === 201){
-                socket?.emit("send-message", res.data.result)
+    // const handleMessData = async() => {
+    //     let now = dayjs()
+    //     let output = now.format('YYYY-MM-DD HH:mm:ss')
+    //     const newUpdate = { ...newMess, createdAt: output}
+    //     try{
+    //         const res = await axios.post(`http://localhost:5000/api/v1/chat/create`, newUpdate)
+    //         if(res.status === 201){
+    //             socket?.emit("send-message", res.data.result)
                 
-            }
-        } catch(error){console.log(error)}
-        setText('')
-        setLoading(false)
-    }
+    //         }
+    //     } catch(error){console.log(error)}
+    //     setText('')
+    //     setLoading(false)
+    // }
     const sendMessage = async () => {
         setLoading(true)
         await createChatRoom()

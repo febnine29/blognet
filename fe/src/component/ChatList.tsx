@@ -7,6 +7,7 @@ import { AppDispatch } from "../app/store";
 import { getAllChatRooms } from "../type/ChatRoomSlice";
 import { chatRoomSelector } from "../type/ChatRoomSlice";
 import { IMessage } from "../type/common";
+import { chatSelector } from "../type/ChatSlice";
 interface IChatList{
     fromid: any;
     onSelectMessage: (id: number) => void;
@@ -22,10 +23,13 @@ export default function ChatList({fromid, onSelectMessage, chat, chatid}:IChatLi
     const dispatch = useDispatch<AppDispatch>()
     // const {chatRooms} = useSelector(chatRoomSelector)
     // const chatRoom = chatRooms?.find((room:any) => room.members.includes(fromid));
+    const {chats} = useSelector(chatSelector);
+    const lastMessage = chats?.slice(-1)[0];
     const toid = chat?.members?.find((member:any) => member !== fromid)
     useEffect(() => {
-
-    },[chat])
+        console.log(lastMessage);
+        
+    },[chats])
     const [lastMess, setLastMess] = useState<IMessage | null>(null)
     
         const fetchLastMessage = async () => {

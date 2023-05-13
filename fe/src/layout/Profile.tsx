@@ -41,6 +41,7 @@ interface IUser{
 export default function Profile(){
   const { userIdParams } = useParams()
   const navigate = useNavigate()
+  const accessToken = localStorage.getItem('accessToken')
   const { isOpen, onOpen, onClose } = useDisclosure()
   const {
     isOpen: isOpenAva,
@@ -114,7 +115,7 @@ export default function Profile(){
   const flexRef = useRef<HTMLDivElement>(null);
   const [newpost, setNewPost] = useState<ISinglePost>({
     descrip: "",
-    userId: userInformation[0].id,
+    userId: userInformation[0]?.id!,
     img: downloadUrl,
     createdAt: '',
     isLiked: "0"
@@ -275,6 +276,7 @@ export default function Profile(){
                           <Text fontSize={15} color='gray.500' ml={2}>{followers?.length! > 1 ? `${followers?.length} Followers` : `${followers?.length} Follower`}</Text>
                         </Flex>
                     </Flex>
+                    {accessToken && accessToken !== 'undefined' ?
                     <Flex 
                       alignItems={userInformation[0]?.id! === parseInt(userIdParams!) ? 'flex-end' : 'flex-end'} 
                       h='100%'
@@ -301,6 +303,7 @@ export default function Profile(){
                           ><Icon as={FaFacebookMessenger} mr={2}/>Message</Button>
                         </Flex>}
                     </Flex>
+                    : undefined}
                 </Flex>
             </Flex>
             <Flex h='100%' p={4} display='flex' flexDirection='row' justifyContent='space-between'>

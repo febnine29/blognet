@@ -37,7 +37,7 @@ export default function NavSide(){
                     <Icon as={BsPeopleFill} fontSize={18} mr={2} color='blue.500'/> Friends
                 </Flex>
             </Link> */}
-            <Text fontSize='18px' textAlign='left' fontWeight='semibold'mb={1} color='gray.700' pl={3}>Peoples you are following</Text>
+            <Text fontSize='20px' textAlign='left' fontWeight='semibold'mb={1} color='gray.700' pl={3}>Peoples you are following</Text>
             <Flex bgColor='white' w='100%' flexDirection='column-reverse'>
                 {followed?.map((person) => (
                     <FollowedList key={person.id} person={person} posts={posts}/>

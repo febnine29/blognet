@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box,Flex, Text, Avatar, Button, Menu,IconButton, MenuGroup, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
+import React,{useState, useEffect} from 'react';
+import { Box,Flex, Text, Avatar, Button, Menu,IconButton, MenuGroup, MenuButton, MenuList, MenuItem,Input } from '@chakra-ui/react';
 import { Icon } from '@chakra-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../app/store';
@@ -7,7 +7,7 @@ import { storeAccessToken } from '../features/auth/AuthSlice';
 import { useNavigate } from 'react-router';
 import { Link, useLocation } from 'react-router-dom';
 import { FiMoreVertical } from 'react-icons/fi';
-import { TbLogout } from 'react-icons/tb';
+import { TbLogout, TbSearch } from 'react-icons/tb';
 import { IoPersonCircleOutline } from 'react-icons/io5';
 import { BsFillPersonFill } from 'react-icons/bs';
 import "../css/navbar.css"
@@ -21,13 +21,19 @@ export default function Navbar() {
   const navigate = useNavigate();
   const accessToken = localStorage.getItem('accessToken')
   const {user} = useSelector(userSelector)
+  const [inputValue, setInputValue] = useState('');
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      navigate(`/SearchPage/${inputValue}`);
+    }
+  };
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('userInformation');
     dispatch(storeAccessToken(''));
     navigate('/login');
   };
-  
   return (
     <Box
       display="flex"
@@ -43,10 +49,25 @@ export default function Navbar() {
         <Text onClick={() => navigate('/')} cursor='pointer'>Invisocial</Text>
       </Box>
       <Flex display={user?.id! === undefined ? 'none' : 'block'} width='50%'  
-        // bgColor={location.pathname.includes('/chatId') ? 'transparent': 'white' } 
+        bgColor='transparent'
         position='relative' 
-        borderRadius="50px" h="40px" px={1}>
-        {/* {location.pathname.includes('/chatId') ? <></> : <Box>search</Box> } */}
+        borderRadius="50px" h="40px" px={1}
+      >
+        {location.pathname.includes('/chatId') ? <></> : 
+          <Flex w='400px' mx='auto' bgColor='white' h='100%'
+            borderRadius='50px'
+            alignItems='center'
+            px={4}
+          > 
+            <Icon as={TbSearch} fontSize='20px'/>
+            <Input 
+              variant='unstyle'
+              placeholder='Search posts or users'
+              onChange={(event) => setInputValue(event.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+          </Flex> 
+        }
       </Flex>
       {accessToken && accessToken !== 'undefined' ?
         <Box width='25%' display='flex' flexDirection='row' alignItems='center' justifyContent='flex-end'>

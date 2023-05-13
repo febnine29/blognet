@@ -28,19 +28,19 @@ export default function SingleCommentCp({id,descrip, userId,postId, createdAt, i
         fetchUser();
     },[userId])
     return (
-        <Flex  position='relative' textAlign='left' alignItems='center' mb={7} >
+        <Flex  position='relative' textAlign='left' alignItems='center' mb={6} >
             <Avatar name={name} src={user?.profilePic!} size="sm" mr={2}></Avatar>
                 <Flex display='' maxW='428px' position='relative' px={2} py={1} bgColor="#f3f3f3" borderRadius='10px' borderWidth='1px' borderColor='gray.100' flexDirection='column'>
                     <Text fontSize="13px" fontWeight='bold'>{name}</Text>
                     <Box >{descrip}</Box>
                 </Flex>
                 <Flex position='absolute' left='40px' bottom={userInformation[0]?.id! === undefined ? '-18px' : '-27px'}  color='gray.600' className='tool-comment' pl={2} >
-                    {userInformation[0]?.id! === undefined ? undefined : 
+                    {/* {userInformation[0]?.id! === undefined ? undefined : 
                     <Flex justifyContent='flex-start' alignItems='flex-start'>
                     <Box className='item'><Icon as={AiOutlineLike} cursor='pointer' fontSize={18}/></Box>
                     <Box className='item'><Icon as={BiDislike} cursor='pointer' fontSize={18}/></Box>
                     <Box className='item reply'><Text fontSize="12px" fontWeight='semibold' _hover={{textDecoration: 'underline', cursor: 'pointer'}}>Reply</Text></Box>
-                     </Flex>}
+                     </Flex>} */}
                     <Box className='item'><Text fontSize="12px" color='gray.500'>{dayjs(createdAt).fromNow().slice(0, -4)}</Text></Box>
                 </Flex>
         </Flex>

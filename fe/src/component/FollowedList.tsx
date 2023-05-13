@@ -81,7 +81,7 @@ export default function FollowedList({person, posts}:any){
                     </Flex>
                 </Box>
             </Flex>
-            <Flex w='100%' flexDirection='column' maxH='500px' overflowY='auto' px='4px'
+            <Flex w='100%' flexDirection='column' maxH='500px' overflowY='auto' px='4px' pt={1}
                 css={{
                     '&::-webkit-scrollbar': {
                       width: '5px',
@@ -90,7 +90,7 @@ export default function FollowedList({person, posts}:any){
                       background: 'transparent',
                     },
                     '&::-webkit-scrollbar-thumb': {
-                      background: '#bababa',
+                      background: '#dadada',
                       borderRadius: '10px',
                     },
                     '&::-webkit-scrollbar-thumb:hover': {
