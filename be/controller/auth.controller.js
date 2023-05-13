@@ -126,6 +126,17 @@ const authController = {
             res.status(400).json({ error: error.message });
         }
     },
+    searchUsersByUsername: async (req, res) => {
+        try {
+          const { name } = req.query;
+          const [rows, fields] = await pool.query("select * from users where name like ?", [`%${name}%`]);
+          res.json({
+            result: rows
+          });
+        } catch (error) {
+          res.status(400).json({ error: error.message });
+        }
+      }
 }
 
 module.exports = authController

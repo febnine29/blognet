@@ -10,4 +10,5 @@ router.get("/getAllUsersId", authController.getAllUsersId)
 router.post("/updateAvaUserid=:id", authController.updateAva)
 router.post("/updateCoverUserid=:id", authController.updateCover)
 router.post("/sendEmail", authController.sendEmail)
+router.get("/search", authController.searchUsersByUsername)
 module.exports = router

@@ -48,12 +48,14 @@ export default function CommonSide(){
     }
     const fetchUser = async () => {
         try {
+            if(topUsers){
             const response = await axios.get(`http://localhost:5000/api/v1/auth/getUserId=${post?.userId}`);
             // if(response.data.info){
                 setUsername(response.data.info.name);
                 setAva(response.data.info.profilePic)
                 // console.log(response.data.info);
             // }
+            }
         } catch (error) {
             console.error(error);
             }
@@ -63,7 +65,7 @@ export default function CommonSide(){
         fetchTopUser()
         fetchPostMostLikes()
         fetchUser()
-    },[post])
+    },[])
     console.log(post);
     
     return (
