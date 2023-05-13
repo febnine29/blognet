@@ -2,7 +2,7 @@ import React,{useState, useRef, useEffect} from 'react';
 import { Box, IconButton, Input,Text, Spinner, Flex, useDisclosure,Modal, ModalOverlay, ModalCloseButton, ModalHeader, ModalContent, ModalBody, Button, ModalFooter, Avatar, useFocusEffect, Image } from '@chakra-ui/react';
 import {Icon} from '@chakra-ui/icons'
 import Navbar from '../component/Navbar';
-import {ISinglePost} from '../type/common';
+import {getUserById, ISinglePost} from '../type/common';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios'
 import '../css/home.css'
@@ -19,16 +19,27 @@ import { dateNow } from '../type/common';
 import { useParams } from 'react-router';
 import dayjs from 'dayjs'
 import { BsCameraFill } from 'react-icons/bs';
-export default function ModalChangeAva({onOpen, isOpen, onClose}:any){
-    const dispatch = useDispatch<AppDispatch>()
-    const [loading, setLoading] = useState(false)
-    const [images, setImages] = useState<any[]>([]);
-    const [downloadUrl, setDownloadUrl] = useState<string[]>([])
-    const [selectedImages, setSelectedImages] = useState<string[]>([]);
-    const flexRef = useRef<HTMLDivElement>(null);
-    
-  // ----------SHOW PREVIEW SELECTED IMAGES----------
+import { getUserInfo, IUser, userSelector } from '../type/UserSlice';
+interface IProp{
+  isOpenAva: boolean;
+  onOpenAva: () => void;
+  onCloseAva: () => void;
+  userid: number
+}
+export default function ModalChangeAva({onOpenAva, isOpenAva, onCloseAva, userid}:IProp){
+  const dispatch = useDispatch<AppDispatch>()
+  const {user} = useSelector(userSelector)
+  const [loading, setLoading] = useState(false)
+  const [images, setImages] = useState<any[]>([]);
+  const [downloadUrl, setDownloadUrl] = useState<string[]>([])
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const flexRef = useRef<HTMLDivElement>(null);
+  const [userInfo, setUserInfo] = useState<IUser>()
 
+  useEffect(() => {
+    dispatch(getUserInfo(userid))
+  },[])
+  // ----------SHOW PREVIEW SELECTED IMAGES----------
   const uploadFiles = async () => {
     const promises: Promise<any>[] = []
     if(images){
@@ -83,6 +94,7 @@ export default function ModalChangeAva({onOpen, isOpen, onClose}:any){
 
   function deleteHandler(image: any) {
     setSelectedImages(selectedImages.filter((e) => e !== image));
+    setDownloadUrl([])
     // console.log(image)
     URL.revokeObjectURL(image);
   }
@@ -90,25 +102,29 @@ export default function ModalChangeAva({onOpen, isOpen, onClose}:any){
   const closeModal = async () => {
     setDownloadUrl([])
     setSelectedImages([])
-    onClose()
+    onCloseAva()
     console.log(images)
+  }
+  const updateAva = async (url: string | undefined) => {
+    try {
+      const res = await axios.post(`http://localhost:5000/api/v1/auth/updateAvaUserid=${userid}`, {profilePic: url})
+      dispatch(getUserInfo(userid))
+      
+    } catch(error){console.log(error)}
   }
   const handleUpPost = async () => {
     setLoading(true)
     await uploadFiles();
-    // dispatch(newPost(newpost))
+    updateAva(downloadUrl[0])
+    console.log(downloadUrl[0]);
+    
     closeModal()
   }
-//   useEffect(() => {
-//     let now = dayjs()
-//     let output = now.format('YYYY-MM-DD HH:mm:ss')
-//     setNewPost({ ...newpost, createdAt: output })
-//   },[dispatch])
     return (
-    <Modal closeOnOverlayClick={false} isCentered isOpen={isOpen} onClose={onClose}>
+    <Modal closeOnOverlayClick={false} isCentered isOpen={isOpenAva} onClose={onCloseAva}>
         <ModalOverlay />
         <ModalContent maxW={500}>
-        <ModalHeader textAlign='center'>New Status</ModalHeader>
+        <ModalHeader textAlign='center'>Change your profile picture</ModalHeader>
         <ModalCloseButton />
         <Box w='100%' h='1px' bgColor='gray.200' mb={2} ></Box>
         <ModalBody>
@@ -118,6 +134,7 @@ export default function ModalChangeAva({onOpen, isOpen, onClose}:any){
             <Flex w='100%' flexDirection='column' alignItems='center'>
                 <Text fontSize="18px" fontWeight='medium' mr='auto'>
                 {/* {userInformation[0]?.name!} */}
+                  The photo you will choose should be 1:1 aspect ratio:
                 </Text>
                 <Flex color="gray.500" fontSize="13px" alignItems='center' mr='auto'>
                 <Icon as={IoEarth} mr={1}/>
@@ -130,42 +147,44 @@ export default function ModalChangeAva({onOpen, isOpen, onClose}:any){
             <Flex alignItems='center' justifyContent='center'>
             <Flex flexDirection='column' justifyContent='center' alignItems='center' mr={4}>
                 <label style={{color: 'grey'}}>
-                + files or images
+                Choose an image
                 <input
                     className='select-input'
                     type="file"
-                    multiple
                     hidden
                     onChange={handleSelected}
                 />
                 </label>
-                <p>{selectedImages.length === 0 ? undefined : `${selectedImages.length} selected `}</p>
+                {/* <p>{selectedImages.length === 0 ? undefined : `${selectedImages.length} selected `}</p> */}
             </Flex>
             <Flex ref={flexRef} flexDirection='column' className="images" maxW={300} maxH={400} overflowY={selectedImages ? 'scroll' : 'unset'} >
-                {selectedImages &&
+              {selectedImages &&
                 selectedImages.reverse().map((image, index) => {
-                    return (
+                  return (
                     <Box key={image} className="image" w={280} position='relative'>
-                        <img src={image} width='100%' height="auto" />
-                        <IconButton 
-                            aria-label='close'
-                            onClick={() => deleteHandler(image)} 
-                            position='absolute' 
-                            right="2" top="2"
-                            icon={<IoClose fontSize='18px'/>}
-                            borderRadius='50%'
-                            bgColor='white'
-                        />
+                      <img src={image} width='100%' height="auto" />
+                      <IconButton 
+                          aria-label='close'
+                          onClick={() => deleteHandler(image)} 
+                          position='absolute' 
+                          right="2" top="2"
+                          icon={<IoClose fontSize='18px'/>}
+                          borderRadius='50%'
+                          bgColor='white'
+                      />
                     </Box>
-                    );
+                  );
                 })}
             </Flex>
             </Flex>
 
         </ModalBody>
         <ModalFooter>
-            <Button colorScheme='blue' onClick={handleUpPost} w='100%'>
-            {loading ? <Spinner /> : 'Post'}
+            <Button 
+              colorScheme='blue' onClick={handleUpPost} w='100%'
+              isDisabled={selectedImages.length === 0 ? true : false}
+            >
+              {loading ? <Spinner /> : 'Post'}
             </Button>
         </ModalFooter>
         </ModalContent>

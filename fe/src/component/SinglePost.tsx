@@ -20,8 +20,10 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import SingleCommentCp from './SingleCommentCp';
-import { dateNow } from '../type/common';
+import { IUser } from '../type/UserSlice';
 import Alert from './AlertDialog';
+import { userSelector } from '../type/UserSlice';
+import { FiClock } from 'react-icons/fi';
 interface SinglePostProp{
     postId: number;
     userId: number;
@@ -38,9 +40,14 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
     const date = dayjs(createdAt).fromNow();
     const dateFormat = dayjs(createdAt).format('DD/MM lúc HH:mm')
     const [output, setOutput] = React.useState('')
-    
+    const {user} = useSelector(userSelector)
+    // useEffect(() => {
+    //     console.log('user', user);
+        
+    // },[user])
     //-----------------post actions:
-    const [username, setUsername] = React.useState<string>('')
+    const [username, setUsername] = React.useState<any>()
+    const [ava, setAva] = React.useState<any>()
     const [likes, setLikes] = React.useState<ILike[] | null>(null)
     const {comments} = useSelector(commentSelector)
     const cmtArray = comments?.filter((comment) => comment.postId === postId)
@@ -121,14 +128,18 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
     useEffect(() => {
         const fetchUser = async () => {
         try {
-        const response = await axios.get(`http://localhost:5000/api/v1/auth/getUserId=${userId}`);
-            setUsername(response.data.info[0].name);
-            
+            const response = await axios.get(`http://localhost:5000/api/v1/auth/getUserId=${userId}`);
+            // if(response.data.info){
+                setUsername(response.data.info.name);
+                setAva(response.data.info.profilePic)
+                // console.log(response.data.info);
+                
+            // }
         } catch (error) {
             console.error(error);
             }
         };
-        
+
         fetchUser();
     }, [userId]);
     const [comment, setComment] = useState<SingleComment>({
@@ -154,12 +165,14 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
     },[comment.descrip])
     useEffect(() => {
         validate();
-    },[])
+        // console.log(username, ava);
+        
+    },[username])
     return (
         <Box className='shadow-box' px={4} pt={4} pb={1} mb={4} bgColor='white' borderRadius='10px' w='500px'>
             <Alert isOpen={isOpen} onOpen={onOpen} onClose={onClose} handleDeletePost={handleDeletePost}/>
             <Flex className='post-info' alignItems='center' w="100%">
-                <Avatar name={username} size='md'/>
+                <Avatar name={username} size='md' src={ava}/>
                 <Box ml={2}>
                     <Text fontWeight='bold' textAlign='left' fontSize='17px'
                         onClick={() => navigate(`/profileId/${userId}`)}
@@ -167,9 +180,12 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                     >
                         {username}
                     </Text>
-                    <Text fontSize='12px' color='gray' textAlign='left'>{output!}</Text>
+                    <Flex alignItems='center'>
+                        <Icon as={FiClock} color='gray.500' mr={1} fontSize='14px'/>
+                        <Text fontSize='12px' color='gray' textAlign='left'>{output!}</Text>
+                    </Flex>
                 </Box>
-                {userId === userInformation[0]?.id! ? 
+                {userId === user?.id! ? 
                     <Box ml='auto'>
                     <Menu>
                         <MenuButton as={Button} rightIcon={<BsThreeDots />} variant='ghost' _hover={{bgColor: 'transparent'}} _active={{bgColor: 'transparent'}}/>
@@ -209,7 +225,7 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                 <Flex className='react-stat' flexDirection='row' alignItems='center' textAlign='left' mb={2} px={2}>
                     {likes?.length! > 0 ? 
                         <Flex className='likes-stat' flexDirection='row' alignItems='center' textAlign='left'>
-                            <Icon as={FaHeart} fontSize='18px' color="white" mr={1} bgColor="#4200eb" p="3px" borderRadius="50%"/>
+                            <Icon as={FaHeart} fontSize='18px' color="white" mr={1} bgColor="#4200eb" p="3.5px" borderRadius="50%"/>
                             <Text fontSize='13px' color='gray' textAlign='left'>
                                 {likes?.length! > 1 ? `${likes?.length!} likes` : `${likes?.length!} like`}
                             </Text>
@@ -251,7 +267,7 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                     >
                         Comment
                     </Button>
-                    {userInformation[0]?.id! === undefined ? undefined : 
+                    {/* {userInformation[0]?.id! === undefined ? undefined : 
                         <Button 
                             bgColor='transparent'
                             size='sm'
@@ -261,12 +277,12 @@ export default function SinglePost({postId, descrip, userId, img, createdAt, isL
                         >
                             Share
                         </Button>
-                    }
+                    } */}
                 </Flex>
                     <Flex className="comment-box" flexDirection='column' w="100%" borderTopWidth="1px" borderTopColor='gray.200' py={2}>
                         {showComment && userInformation[0]?.id! !== undefined && (
                         <Flex textAlign='left' alignItems='center' mb={2}>
-                        <Avatar name={userInformation[0].name} size="sm" mr={2}></Avatar>
+                        <Avatar name={user?.name} size="sm" mr={2} src={user?.profilePic!}></Avatar>
                         <form onSubmit={handleSubmit} style={{width: '100%', display: 'flex', flexDirection: 'row'}}>
                             <Input
                             placeholder='Write a comment...'

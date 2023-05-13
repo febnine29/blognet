@@ -1,8 +1,8 @@
 import React,{useState, useRef, useEffect} from 'react';
-import { Box, IconButton, Input,Text, Spinner, Flex, useDisclosure,Modal, ModalOverlay, ModalCloseButton, ModalHeader, ModalContent, ModalBody, Button, ModalFooter, Avatar, useFocusEffect, Image } from '@chakra-ui/react';
+import { Box, IconButton, Input,Text, Spinner, Flex, useDisclosure,Modal, ModalOverlay, ModalCloseButton, ModalHeader, ModalContent, ModalBody, Button, ModalFooter, Avatar, useFocusEffect, Image, AvatarGroup } from '@chakra-ui/react';
 import {Icon} from '@chakra-ui/icons'
 import Navbar from '../component/Navbar';
-import {ISinglePost} from '../type/common';
+import {IFollowersList, ISinglePost} from '../type/common';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios'
 import '../css/home.css'
@@ -16,11 +16,18 @@ import { AppDispatch } from '../app/store';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { storage } from '../firebase';
 import { dateNow } from '../type/common';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import dayjs from 'dayjs'
-import { BsCameraFill } from 'react-icons/bs';
+import { BsCameraFill, BsCheckLg } from 'react-icons/bs';
 import {MdOutlineMail, MdWorkOutline} from 'react-icons/md'
 import { TbBuildingCommunity } from 'react-icons/tb';
+import ModalChangeAva from '../component/ModalChangeAva';
+import { getUserInfo, userSelector } from '../type/UserSlice';
+import ModalChangeCover from '../component/ModalChangeCover';
+import { AiOutlinePlus } from 'react-icons/ai';
+import ModalMessenger from '../component/ModalMessenger';
+import { FaFacebookMessenger } from 'react-icons/fa';
+import FollowersAvatar from '../component/FollowersAvatar';
 interface IUser{
   id: number;
   username: string;
@@ -33,28 +40,65 @@ interface IUser{
 }
 export default function Profile(){
   const { userIdParams } = useParams()
+  const navigate = useNavigate()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const {
+    isOpen: isOpenAva,
+    onOpen: onOpenAva,
+    onClose: onCloseAva,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenCover,
+    onOpen: onOpenCover,
+    onClose: onCloseCover,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenMess,
+    onOpen: onOpenMess,
+    onClose: onCloseMess,
+  } = useDisclosure();
   const dispatch = useDispatch<AppDispatch>()
   const { posts, postLoading } = useSelector(postSelector)
+  const {user} = useSelector(userSelector)
   const [uid, setUid] = useState()
   const [username, setUsername] = useState()
   const [email, setEmail] = useState()
-  const [name, setName] = useState()
   const [coverPic, setCoverpic] = useState()
   const [profilePic, setProfilepic] = useState()
   const [city, setCity] = useState()
   const [website, setWebsite] = useState()
-  
+  const [isFollow, setIsFollow] = useState<boolean>()
+  const [followers, setFollowers] = useState<IFollowersList[] | null>(null)
+  useEffect(() => {
+    // console.log('user', user);
+    
+  },[user])
   useEffect(() => {
     const fetchUser = async () => {
-        try {
+    try {
         const response = await axios.get(`http://localhost:5000/api/v1/auth/getUserId=${userIdParams}`);
-            setName(response.data.info[0].name)
-        } catch (error) {
-            console.error(error);
-            }
-        };
-        
+        // if(response.data.info){
+            setUsername(response.data.info.name);
+            setProfilepic(response.data.info.profilePic)
+            setCoverpic(response.data.info.coverPic)
+            setEmail(response.data.info.email)
+            setCity(response.data.info.city)
+            // console.log(response.data.info);
+            
+        // }
+    } catch (error) {
+        console.error(error);
+        }
+    };
+    const countFollowers = async () => {
+      try {
+          const res = await axios.post('http://localhost:5000/api/v1/follow/getFollowers',{
+              id: parseInt(userIdParams!)
+          })
+          setFollowers(res.data.result)
+      } catch(error){console.log(error)}
+    }
+    countFollowers()
     fetchUser();
 },[userIdParams])
   const userInformation = JSON.parse(localStorage.getItem('userInformation') || '{}');
@@ -147,6 +191,53 @@ export default function Profile(){
     dispatch(newPost(newpost))
     closeModal()
   }
+  const checkRelation = async () => {
+    try{
+      const res = await axios.post('http://localhost:5000/api/v1/follow/checkRelation',{
+        followerUserId: userInformation[0].id!,
+        followedUserId: parseInt(userIdParams!)
+      })
+      if(res.data.result === 'new relation'){
+        setIsFollow(false)
+      } 
+        
+      // if(res.status === 201){
+      // } else if(res.status === 400){
+        
+      // }
+      // return res.status === 201
+    } catch(error){
+      console.log(error);
+      setIsFollow(true)
+    }
+  }
+  const follow = async () => {
+    try{
+      const res = await axios.post('http://localhost:5000/api/v1/follow/setfollow',{
+        followerUserId: userInformation[0].id!,
+        followedUserId: parseInt(userIdParams!)
+      })
+      checkRelation()
+    } catch(error){console.log(error)}
+  }
+  const unfollow = async () => {
+    try{
+      const res = await axios.post('http://localhost:5000/api/v1/follow/unfollow',{
+        followerUserId: userInformation[0].id!,
+        followedUserId: parseInt(userIdParams!)
+      })
+      checkRelation()
+    } catch(error){console.log(error)}
+  }
+
+  useEffect(() => {
+    checkRelation()
+    
+  },[userIdParams])
+  useEffect(() => {
+    console.log('isFollow', isFollow);
+
+  },[isFollow])
   useEffect(() => {
     let now = dayjs()
     let output = now.format('YYYY-MM-DD HH:mm:ss')
@@ -158,36 +249,67 @@ export default function Profile(){
           <Navbar />
           <Flex className='main-body' w='100%' h='100%' p={4} display='flex' flexDirection='column' bgColor="#fbfbfb" m="auto">
             <Flex flexDirection='column' w='910px' className='shadow-box' mb={4} m='auto' bgColor='white' borderRadius='10px'>
-                <Box position='relative' className='cover-pic' h='350px' w='100%' borderBottomWidth='2px' borderBottomColor='gray.200'>
-                    <Image src={coverPic}/>
-                    {userInformation[0]?.id! === parseInt(userIdParams!) ? 
-                    <IconButton position='absolute' bottom='5px' right='5px' aria-label='picture' icon={<BsCameraFill />} bgColor='transparent'/>
-                    : 'helu'}
-                  </Box>
-                <Flex className='info' justifyContent='flex-start' alignItems='center' w='100%' h='150px' p={3} > 
-                    <Flex position='relative' >
-                        <Avatar name={name} src={profilePic} size='2xl'/>
+                <Box position='relative' className='cover-pic' h='350px' w='100%' borderBottomWidth='2px' borderBottomColor='gray.200' overflow='hidden'
+                  backgroundImage={coverPic}
+                  backgroundSize='cover'
+                >
+                </Box>
+                <Flex className='info' justifyContent='flex-start' alignItems='center' w='100%' h='100px' py={3} px={6}> 
+                    <Box className="avatar-box" position='relative' w='200px' h='100%'>
+                        <Avatar name={username} src={profilePic} size='2xl' position='absolute' top='-50px' left={0} borderWidth='3px' borderColor='white'/>
                         {userInformation[0]?.id! === parseInt(userIdParams!) ? 
-                        <IconButton position='absolute' bottom='0' right='0' aria-label='picture' icon={<BsCameraFill />} borderRadius='50%' borderWidth='2px' borderColor='white'/>
+                        <IconButton 
+                          position='absolute' bottom='0px' right='0' aria-label='picture' icon={<BsCameraFill />} borderRadius='50%' borderWidth='2px' borderColor='white'
+                          onClick={onOpenAva}
+                        />
                         : undefined}
+                    </Box>
+                    <Flex flexDirection='column' textAlign='left' pl={4} w='100%'>
+                        <Text fontSize='30px' fontWeight='semibold'>{username}</Text>
+                        <Flex alignItems="center">
+                          <AvatarGroup size='sm' max={1} fontSize='12px' > 
+                          {followers?.map((follower) => (
+                            <FollowersAvatar key={follower.id} follower={follower}/>
+                          ))}
+                          </AvatarGroup>
+                          <Text fontSize={15} color='gray.500' ml={2}>{followers?.length! > 1 ? `${followers?.length} Followers` : `${followers?.length} Follower`}</Text>
+                        </Flex>
                     </Flex>
-                    <Flex flexDirection='column' textAlign='left' pl={4}>
-                        <Text fontSize='30px' fontWeight='semibold'>{name}</Text>
-                        <Text>Number of followers</Text>
-                        <Text>followers list avatars</Text>
+                    <Flex 
+                      alignItems={userInformation[0]?.id! === parseInt(userIdParams!) ? 'flex-end' : 'flex-end'} 
+                      h='100%'
+                      pb={2}
+                    >
+                      {userInformation[0]?.id! === parseInt(userIdParams!) ? 
+                        <Button onClick={onOpenCover} leftIcon={<BsCameraFill />}>Change cover</Button>
+                      : <Flex >
+                          <Button 
+                            colorScheme={isFollow ? 'green' : 'blue'}
+                            leftIcon={isFollow ? <BsCheckLg /> : <AiOutlinePlus />} 
+                            borderRadius='50px' 
+                            mr={2}
+                            onClick={isFollow ? unfollow : follow}
+                          >
+                            {/* {isFollow !== undefined && (isFollow ? 'UnFollow' : 'follow')} */}
+                            {isFollow ? 'Unfollow' : 'Follow'}
+                          </Button>
+                          {isFollow}
+                          <Button
+                            onClick={onOpenMess}
+                            borderRadius='50px'
+                            color='#4200eb'
+                          ><Icon as={FaFacebookMessenger} mr={2}/>Message</Button>
+                        </Flex>}
                     </Flex>
-                </Flex>
-                <Flex className='buttons-in-profile'>
-
                 </Flex>
             </Flex>
             <Flex h='100%' p={4} display='flex' flexDirection='row' justifyContent='space-between'>
-                <Flex w='380px' maxH='600px' className='shadow-box' flexDirection='column' p={4} mb={4} ml='auto' mr={6} bgColor='white' borderRadius='10px'>
+                <Flex w='380px' maxH='600px' className='shadow-box' flexDirection='column' p={6} mb={4} ml='auto' mr={6} bgColor='white' borderRadius='10px'>
                   <Box fontSize='20px' textAlign='left' fontWeight='semibold'>Introduce</Box>
                   {userInformation[0]?.id! === parseInt(userIdParams!) ? 
                   <Button color='gray.600' my={4}>Edit Your Informations</Button>
                   : undefined}
-                  <Flex alignItems='center' color='gray.600'><Icon as={MdWorkOutline} mr={2} color='gray.600' fontSize={20}/>Working at</Flex>
+                  <Flex alignItems='center' color='gray.600' mt={userInformation[0]?.id! === parseInt(userIdParams!) ? '0' : '8'}><Icon as={MdWorkOutline} mr={2} color='gray.600' fontSize={20}/>Working at</Flex>
                   <Flex alignItems='center' color='gray.600' my={2}><Icon as={MdOutlineMail} mr={2} color='gray.600' fontSize={20}/>Email address</Flex>
                   <Flex alignItems='center' color='gray.600'><Icon as={TbBuildingCommunity} mr={2} color='gray.600' fontSize={20}/>Live at</Flex>
                 </Flex>
@@ -196,7 +318,7 @@ export default function Profile(){
                   {userInformation[0]?.id! === parseInt(userIdParams!) ? 
                     <Flex flexDirection='column' className='create-status shadow-box' px={3} py={3} mb={4} bgColor='white' borderRadius='10px' maxW='590px' minW="500px">
                     <Flex alignItems='center' w='100%'>
-                        <Avatar name={userInformation[0]?.name!} w='40px' h='40px' mr={2}/>
+                        <Avatar name={userInformation[0]?.name!} w='40px' h='40px' mr={2} src={user?.profilePic!}/>
                         <Button w="100%" onClick={onOpen} fontWeight='medium' textAlign='left' color="gray.400" borderRadius='50px'>
                         Write your new status, {userInformation[0]?.name!}!...
                         </Button>
@@ -215,7 +337,7 @@ export default function Profile(){
                         <ModalBody>
 
                             <Flex alignItems='center'>
-                            <Avatar name={userInformation[0]?.name!} size="md" mr={2}/>
+                            <Avatar name={userInformation[0]?.name!} size="md" mr={2} src={user?.profilePic!}/>
                             <Flex w='100%' flexDirection='column' alignItems='center'>
                                 <Text fontSize="18px" fontWeight='medium' mr='auto'>
                                 {userInformation[0]?.name!}
@@ -294,6 +416,9 @@ export default function Profile(){
             </Flex>
               
           </Flex>
+          <ModalChangeAva userid={userInformation[0]?.id!} onOpenAva={onOpenAva} isOpenAva={isOpenAva} onCloseAva={onCloseAva}/>
+          <ModalChangeCover userid={userInformation[0]?.id!} onOpenCover={onOpenCover} isOpenCover={isOpenCover} onCloseCover={onCloseCover}/>
+          <ModalMessenger onOpenMess={onOpenMess} isOpenMess={isOpenMess} onCloseMess={onCloseMess} userid={parseInt(userIdParams!)} currentUserId={userInformation[0]?.id!} username={username!}/>
       </Box>
   );
 }

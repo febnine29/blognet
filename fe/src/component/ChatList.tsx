@@ -11,13 +11,14 @@ interface IChatList{
     fromid: any;
     onSelectMessage: (id: number) => void;
     chat: any;
+    chatid: any
 }
 interface IResponse{
     id: number;
     members: number[];
     createdAt: string
 }
-export default function ChatList({fromid, onSelectMessage, chat}:IChatList){
+export default function ChatList({fromid, onSelectMessage, chat, chatid}:IChatList){
     const dispatch = useDispatch<AppDispatch>()
     // const {chatRooms} = useSelector(chatRoomSelector)
     // const chatRoom = chatRooms?.find((room:any) => room.members.includes(fromid));
@@ -45,8 +46,8 @@ export default function ChatList({fromid, onSelectMessage, chat}:IChatList){
         const fetchUserInfo = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/api/v1/auth/getUserId=${toid}`)
-                setAva(response.data.info[0].profilePic)
-                setName(response.data.info[0].name)
+                setAva(response.data.info.profilePic)
+                setName(response.data.info.name)
             } catch (error){ console.log(error); }
         }
         fetchUserInfo()
@@ -54,7 +55,10 @@ export default function ChatList({fromid, onSelectMessage, chat}:IChatList){
     },[toid])
     return(
         <Flex flexDirection='column'>
-            <Flex w='100%' mb={4} p={3} _hover={{borderRadius: '10px', bgColor: 'gray.100'}}
+            <Flex 
+                w='100%' mb={4} p={3} _hover={{bgColor: 'gray.100'}}
+                bgColor={chatid === chat.id ? 'gray.100' : 'white'}
+                borderRadius='10px'
                 cursor="pointer"
             >
             <Flex>

@@ -27,7 +27,7 @@ interface IChatList{
 }
 function Chat() {
     const dispatch = useDispatch<AppDispatch>()
-    const {fromid} = useParams()
+    const {toIdParams} = useParams()
     const {chatRooms} = useSelector(chatRoomSelector)
     const user = JSON.parse(localStorage.getItem('userInformation') || '{}');
     const [selectedChatId, setSelectedChatId] = useState<number | null>(null)
@@ -35,7 +35,43 @@ function Chat() {
     const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
     const [currentChat, setCurrentChat] = useState<IChatRoom | null>(null)
     const userid = user[0]?.id!
-
+    // ---------CHECK AND CREATE CHATROOM-----------
+    useEffect(() => {
+        const createChatRoom = async () => {
+            let now = dayjs()
+            let output = now.format('YYYY-MM-DD HH:mm:ss')
+            try{
+                const res = await axios.post('http://localhost:5000/api/v1/chatRoom/create',{
+                    members: [userid, parseInt(toIdParams!)],
+                    createdAt: output
+                })
+                if(res.data.result === "New chatroom created successfully!"){
+                    setSelectedChatId(res.data.chatroom[0].id)
+                    setCurrentChat(res.data.chatroom[0])
+                } else{
+                    return
+                }
+            } catch(error){console.log(error)}
+        }
+        const checkMemberExist = async () => {
+            try{
+                const res = await axios.post('http://localhost:5000/api/v1/chatRoom/checkMessageExist',{
+                    fromId: userid,
+                    toId: parseInt(toIdParams!)
+                })
+                console.log(res);
+                if(res.data.result === "not found"){
+                    // await createChatRoom()
+                    // dispatch(getAllChatRooms)
+                } else{
+                    setSelectedChatId(res.data.result[0].id)
+                    setCurrentChat(res.data.result[0])
+                }
+            } catch(error){console.log(error)}
+        }   
+        checkMemberExist()
+    },[toIdParams])
+    // --------ADD USERs ONLINE---------
     useEffect(() => {
         if (!socket) {
             const newSocket = io('http://localhost:8800');
@@ -71,7 +107,7 @@ function Chat() {
     
     // console.log('member: ', senderId);
     const chatRoom = chatRooms?.filter((room:any) => room.members.includes(userid));
-    console.log('chatRoom',chatRoom);
+    // console.log('chatRoom',chatRoom);
     
     return (
         <Box className="chat">
@@ -95,6 +131,7 @@ function Chat() {
                             chat={item} 
                             fromid={user[0].id!} 
                             onSelectMessage={handleSelectChatId} 
+                            chatid={selectedChatId}
                         />
                         </div>
                     ))}

@@ -9,6 +9,14 @@ export interface Ilogin{
     password: string;
 }
 export const Color = "#4200eb"
+export interface IFollowed{
+    id: number;
+    followedUserId: number
+}
+export interface ITopUser{
+    followedUserId: number,
+    followersCount: number
+}
 export interface IChatRoom{
     id: number;
     members: number[];
@@ -71,6 +79,10 @@ export interface IPost{
     img: string[];
     createdAt: string;
     isLiked: string
+}
+export interface IFollowersList{
+    id:number;
+    followedUserId: number
 }
 export interface ISinglePost{
     descrip: string;

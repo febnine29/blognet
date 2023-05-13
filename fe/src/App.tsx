@@ -16,8 +16,19 @@ import Test from './component/Test';
 import './App.css';
 import Chat from './layout/Chat';
 import ChatBoxDetail from './component/ChatBoxDetail';
+import { getUserInfo } from './type/UserSlice';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from './app/store';
+import ShowSinglePost from './layout/ShowSinglePost';
 
 function App() {
+  const dispatch = useDispatch<AppDispatch>()
+  const userInfo = JSON.parse(localStorage.getItem('userInformation') || '{}');
+  useEffect(() => {
+    if(userInfo){
+      dispatch(getUserInfo(userInfo[0]?.id!))
+    }
+  },[userInfo])
   return (
       <div className="App" style={{fontFamily: 'Roboto, sans-serif'}}>
         <Routes>
@@ -46,7 +57,7 @@ function App() {
             }
           />
           <Route 
-            path="/chat"
+            path="/chat/:toIdParams"
             element={
               <Chat />
             }
@@ -57,13 +68,16 @@ function App() {
               <ChatBoxDetail />
             }
           />
-          {/* {userList && userList.map(userId => ( */}
-            
-            <Route 
-              path="/test" 
-              element={<Test />}
-            />
-          {/* ))} */}
+          <Route 
+            path="/singlepostid/:postid"
+            element={
+              <ShowSinglePost />
+            }
+          />  
+          <Route 
+            path="/test" 
+            element={<Test />}
+          />
         </Routes>
       </div>
   );

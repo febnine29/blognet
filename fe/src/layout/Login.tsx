@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { Navigate, useNavigate } from 'react-router';
 import { storeAccessToken } from '../features/auth/AuthSlice';
 import '../css/auth.css'
+import { getUserInfo } from '../type/UserSlice';
 interface LoginResponse {
     accessToken: string;
 }
@@ -25,6 +26,9 @@ export default function Login(){
             });
             const data: LoginResponse = response.data;
             dispatch(storeAccessToken(data.accessToken));
+            console.log('login',response.data.infor[0].id);
+            const id = response.data.infor[0].id
+            dispatch(getUserInfo(id) as any)
             localStorage.setItem('userInformation', JSON.stringify(response.data.infor))
             localStorage.setItem('accessToken', data.accessToken);
             toast({

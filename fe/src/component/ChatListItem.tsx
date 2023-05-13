@@ -17,9 +17,9 @@ export default function ChatListItem({toid, chatId, onSelect, lastMess}:any){
             try {
                 const response = await axios.get(`http://localhost:5000/api/v1/auth/getUserId=${toid}`)
                 // console.log(response.data.info[0]);
-                setAva(response.data.info[0].profilePic)
+                setAva(response.data.info.profilePic)
                 
-                setName(response.data.info[0].name)
+                setName(response.data.info.name)
             } catch (error){ console.log(error); }
         }
         fetchUserInfo()

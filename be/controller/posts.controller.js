@@ -34,6 +34,46 @@ const postsController = {
             res.status(401).json({status: "error", message: error.message })
         }
     },
+    getByUserId: async (req, res) => {
+        try {
+            const { userId } = req.params
+            const [rows, fields] = await pool.query("select * from posts where userId = ?", [userId])
+            const data = rows.map(row => {
+            return {
+                ...row,
+                img: JSON.parse(row.img)
+                }
+            })
+            res.json({
+                data
+            })
+        } catch (error) {
+            res.status(401).json({status: "error", message: error.message })
+        }
+    },
+    getPostMostLikes: async (req, res) => {
+        try {
+          const [rows, fields] = await pool.query(`
+            SELECT posts.*, COUNT(likes.id) AS num_likes
+            FROM posts
+            LEFT JOIN likes ON posts.id = likes.postId
+            GROUP BY posts.id
+            ORDER BY num_likes DESC
+            LIMIT 1
+          `)
+          const data = rows.map(row => {
+            return {
+              ...row,
+              img: JSON.parse(row.img)
+            }
+          })
+          res.json({
+            data
+          })
+        } catch (error) {
+          res.status(401).json({ status: "error", message: error.message })
+        }
+      },
     create: async (req, res) => {
         try {
             const { descrip, img, userId, createdAt, isLiked } = req.body
@@ -85,6 +125,23 @@ const postsController = {
             res.status(401).json({
                 status: "error"
             })
+        }
+    },
+    searchByDescript: async (req, res) => {
+        try {
+          const { query } = req.query;
+          const [rows, fields] = await pool.query("SELECT * FROM posts WHERE descrip LIKE ?", [`%${query}%`]);
+          const data = rows.map(row => {
+            return {
+              ...row,
+              img: JSON.parse(row.img)
+            }
+          })
+          res.json({
+            data
+          })
+        } catch (error) {
+          res.status(401).json({ status: "error", message: error.message })
         }
     }
 }

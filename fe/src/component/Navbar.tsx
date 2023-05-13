@@ -13,14 +13,14 @@ import { BsFillPersonFill } from 'react-icons/bs';
 import "../css/navbar.css"
 import { FaFacebookMessenger } from 'react-icons/fa';
 import { Color } from '../type/common';
+import { userSelector } from '../type/UserSlice';
 
 export default function Navbar() {
-  
   const location = useLocation()
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const accessToken = localStorage.getItem('accessToken')
-  const user = JSON.parse(localStorage.getItem('userInformation') || '{}');
+  const {user} = useSelector(userSelector)
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('userInformation');
@@ -36,43 +36,46 @@ export default function Navbar() {
       paddingY=".5rem"
       className="navbar"
       position='relative'
-      justifyContent={user[0]?.id! === undefined ? 'space-between' : ''}
+      justifyContent={user?.id! === undefined ? 'space-between' : ''}
       w='100%'
     >
       <Box fontSize='25px' fontWeight="bold" width='25%' color='white' display='flex' justifyContent='flex-start'>
         <Text onClick={() => navigate('/')} cursor='pointer'>Invisocial</Text>
       </Box>
-      <Flex display={user[0]?.id! === undefined ? 'none' : 'block'} width='50%'  bgColor={location.pathname.includes('/chatId') ? 'transparent': 'white' } position='relative' borderRadius="50px" h="40px" px={1}>
-        {location.pathname.includes('/chatId') ? <></> : <Box>search</Box> }
+      <Flex display={user?.id! === undefined ? 'none' : 'block'} width='50%'  
+        // bgColor={location.pathname.includes('/chatId') ? 'transparent': 'white' } 
+        position='relative' 
+        borderRadius="50px" h="40px" px={1}>
+        {/* {location.pathname.includes('/chatId') ? <></> : <Box>search</Box> } */}
       </Flex>
       {accessToken && accessToken !== 'undefined' ?
         <Box width='25%' display='flex' flexDirection='row' alignItems='center' justifyContent='flex-end'>
           <IconButton aria-label='mess' icon={<FaFacebookMessenger />} w='40px' h='40px' color={Color} borderRadius='50%' mr={2}
-            onClick={() => navigate(`/chat`)}
+            onClick={() => navigate(`/chat/0`)}
           />
           <Menu>
             <MenuButton
               as={IconButton}
               aria-label='Options'
-              icon={<Avatar name={user[0].name} src={user.avatar} marginRight=".5rem" w='40px' h='40px'/>}
+              icon={<Avatar name={user?.name} src={user?.profilePic!} marginRight=".5rem" w='40px' h='40px'/>}
               _hover={{bgColor: 'transparent'}}
               _active={{bgColor: 'transparent'}}
               bgColor="transparent"
             />
             <MenuList style={{padding: '10px', width:'300px'}} >
               <MenuItem mb={2} display='flex' flexDirection='column' _hover={{ bgColor: 'transparent'}} borderRadius='10px' sx={{boxShadow: 'rgba(163, 163, 163, 0.5) 0px 0px 4px 0px;'}} bgColor='white'>
-                <Flex w="100%" flexDirection='row' onClick={() => navigate(`/profileId/${user[0].id}`)} alignItems='center' borderRadius='10px' _hover={{bgColor:'gray.100'}} pt={2} px={1} pb={3}
+                <Flex w="100%" flexDirection='row' onClick={() => navigate(`/profileId/${user?.id}`)} alignItems='center' borderRadius='10px' _hover={{bgColor:'gray.100'}} pt={2} px={1} pb={3}
                   
                 > 
-                  <Avatar name={user[0].name} src={user.avatar} marginRight=".5rem" size='sm'/>
+                  <Avatar name={user?.name} src={user?.profilePic!} marginRight=".5rem" size='sm'/>
                   <Text fontWeight='bold' fontSize='17px'
                     
-                  >{user[0].name}</Text>
+                  >{user?.name}</Text>
                 </Flex>
                 <Box w="100%" h="1.5px" bgColor="gray.200" my={1}></Box>
                 <Flex
                   
-                  onClick={() => navigate(`/profileId/${user[0].id}`)}
+                  onClick={() => navigate(`/profileId/${user?.id}`)}
                 w="100%" _hover={{bgColor:'gray.100'}} p={2} justifyContent='center' alignItems='center' borderRadius='10px'>
                   <Text align='center' color='rgba(22, 0, 163, 0.7)' fontWeight='bold'
                   >

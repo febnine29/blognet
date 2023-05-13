@@ -24,6 +24,7 @@ export default function ChatBoxDetail({chatid, fromid, senderId, chat}:any){
     const [socket, setSocket] = useState<Socket | null>(null);
     const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
     const toid = chat?.members?.find((mem:any) => mem !== fromid)
+    // console.log(chat);
     
     useEffect(() => {
         if (!socket) {
@@ -42,12 +43,9 @@ export default function ChatBoxDetail({chatid, fromid, senderId, chat}:any){
         descrip: '',
         fromId: fromid,
         toId: toid,
-        chatId: chat.id,
+        chatId: chat?.id!,
         createdAt: ''
     }) 
-    useEffect(() => {
-        console.log('toid', toid);
-    },[toid])
     useEffect(() => {
         if(senderId){
             setNewMess({...newMess, toId: senderId})
@@ -60,8 +58,8 @@ export default function ChatBoxDetail({chatid, fromid, senderId, chat}:any){
         const fetchUserInfo = async () => {
             try {
                 const response = await  axios.get(`http://localhost:5000/api/v1/auth/getUserId=${toid}`)
-                setAva(response.data.info[0]?.profilePic!)
-                setName(response.data.info[0]?.name!)
+                setAva(response.data.info?.profilePic!)
+                setName(response.data.info?.name!)
             } catch (error){console.log(error);}
         }
         fetchUserInfo()

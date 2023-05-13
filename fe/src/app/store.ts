@@ -7,6 +7,7 @@ import ChildrenCmtSlice from '../type/ChildrenCmtSlice';
 import UserSlice from '../type/UserSlice';
 import ChatSlice from '../type/ChatSlice';
 import ChatRoomSlice from '../type/ChatRoomSlice';
+import FollowedSlice from '../type/ListFollowedSlice';
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
@@ -16,7 +17,8 @@ export const store = configureStore({
     childrenCmt: ChildrenCmtSlice,
     user: UserSlice,
     chats: ChatSlice,
-    chatRooms: ChatRoomSlice
+    chatRooms: ChatRoomSlice,
+    followed: FollowedSlice
   },
 });
 

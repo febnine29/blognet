@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios'
 import '../css/home.css'
 import NavSide from '../component/NavSide';
-import RecentSide from '../component/RecentSide';
+import CommonSide from '../component/CommonSide';
 import SinglePost from '../component/SinglePost';
 import { getAllPosts, postSelector, newPost } from '../type/PostSlice';
 import { getAllComments } from '../type/CommentSlice';
@@ -20,11 +20,14 @@ import { storage } from '../firebase';
 import { dateNow } from '../type/common';
 import dayjs from 'dayjs'
 import { getAllChatRooms } from '../type/ChatRoomSlice';
+import { userSelector } from '../type/UserSlice';
+import { getFollowed } from '../type/ListFollowedSlice';
 
 export default function Home(){
   const { isOpen, onOpen, onClose } = useDisclosure()
   const dispatch = useDispatch<AppDispatch>()
   const { posts, postLoading } = useSelector(postSelector)
+  const {user} = useSelector(userSelector)
   const userInformation = JSON.parse(localStorage.getItem('userInformation') || '{}');
   useEffect(() => {
       dispatch(getAllPosts());
@@ -126,20 +129,21 @@ export default function Home(){
   
   useEffect(()=> {
     dispatch(getAllChatRooms())
+    dispatch(getFollowed(userInformation[0]?.id!))
   },[])
   return (
       <Box>
           <Navbar />
-          <Box className='main-body' w='100vw' h='100%' p={4} display='flex' flexDirection='row' bgColor="#fbfbfb">
+          <Box className='main-body' w='100vw' h='100%' p={4} display='flex' flexDirection='row' bgColor="white">
               <NavSide />
              
-              <Flex className='blog-side' w='50%' justifyItems='center' alignItems="center" flexDirection='column'> 
+              <Flex className='blog-side' w='40%' justifyItems='center' alignItems="center" flexDirection='column' minW='507px'> 
                 {userInformation[0]?.id! === undefined ? undefined
                   : <Flex flexDirection='column' className='create-status shadow-box' px={3} py={3} mb={4} bgColor='white' borderRadius='10px' maxW='590px' minW="500px">
                   <Flex alignItems='center' w='100%'>
-                    <Avatar name={userInformation[0]?.name!} w='40px' h='40px' mr={2}/>
+                    <Avatar name={user?.name} src={user?.profilePic!} w='40px' h='40px' mr={2}/>
                     <Button w="100%" onClick={onOpen} fontWeight='medium' textAlign='left' color="gray.400" borderRadius='50px'>
-                      What are you thinking about, {userInformation[0]?.name!}?...
+                      What are you thinking about, {user?.name}?...
                     </Button>
                   </Flex>
                   <Box w='100%' h='1px' bgColor='gray.200' my={2}></Box>
@@ -154,12 +158,11 @@ export default function Home(){
                       <ModalCloseButton />
                       <Box w='100%' h='1px' bgColor='gray.200' mb={2} ></Box>
                       <ModalBody>
-
                         <Flex alignItems='center'>
-                          <Avatar name={userInformation[0]?.name!} size="md" mr={2}/>
+                          <Avatar name={user?.name} src={user?.profilePic!} size="md" mr={2}/>
                           <Flex w='100%' flexDirection='column' alignItems='center'>
                             <Text fontSize="18px" fontWeight='medium' mr='auto'>
-                              {userInformation[0]?.name!}
+                              {user?.name}
                             </Text>
                             <Flex color="gray.500" fontSize="13px" alignItems='center' mr='auto'>
                               <Icon as={IoEarth} mr={1}/>
@@ -231,7 +234,7 @@ export default function Home(){
                     />
                   ))}
               </Flex> 
-              <RecentSide />
+              <CommonSide />
           </Box>
       </Box>
   );
